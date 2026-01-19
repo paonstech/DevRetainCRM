@@ -32,7 +32,23 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { cn } from "@/lib/utils"
+
+// Try to import subscription context (optional)
+let useSubscription: any = null
+try {
+  const subscriptionModule = require("@/contexts/subscription-context")
+  useSubscription = subscriptionModule.useSubscription
+} catch {
+  // Context not available
+}
 
 // User role type
 type UserRole = "CREATOR" | "SPONSOR" | "ADMIN"
@@ -149,6 +165,11 @@ export function Sidebar({
 }: SidebarProps) {
   const pathname = usePathname()
   const [isCollapsed, setIsCollapsed] = useState(collapsed)
+  
+  // Get subscription context if available
+  const subscription = useSubscription ? useSubscription() : null
+  const currentPlan = subscription?.plan || user.plan
+  const setPlan = subscription?.setPlan
 
   const handleCollapse = () => {
     const newCollapsed = !isCollapsed
@@ -175,7 +196,7 @@ export function Sidebar({
 
     const linkContent = (
       <Link
-        href={item.href}
+        href={item.href as any}
         className={cn(
           "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all",
           isActive
@@ -239,9 +260,15 @@ export function Sidebar({
             {!isCollapsed && (
               <div className="flex flex-col">
                 <span className="font-bold text-lg text-slate-900 dark:text-white leading-tight">DevRetain</span>
-                {user.plan && (
-                  <Badge className="w-fit mt-0.5 bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400 border-0 text-[10px] px-1.5 py-0">
-                    {user.plan}
+                {currentPlan && (
+                  <Badge className={cn(
+                    "w-fit mt-0.5 border-0 text-[10px] px-1.5 py-0",
+                    currentPlan === "FREE" && "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400",
+                    currentPlan === "PRO" && "bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400",
+                    currentPlan === "ENTERPRISE" && "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400"
+                  )}>
+                    {currentPlan === "ENTERPRISE" && <Crown className="h-2.5 w-2.5 mr-0.5" />}
+                    {currentPlan}
                   </Badge>
                 )}
               </div>
@@ -349,6 +376,38 @@ export function Sidebar({
             </Link>
           )}
         </div>
+
+        {/* Plan Switcher (Demo) */}
+        {!isCollapsed && setPlan && (
+          <div className="p-3 border-t border-slate-200 dark:border-slate-800">
+            <p className="text-[10px] uppercase tracking-wider text-slate-400 mb-2 px-1">Demo: Plan Değiştir</p>
+            <Select value={currentPlan} onValueChange={(value) => setPlan(value as any)}>
+              <SelectTrigger className="h-8 text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="FREE">
+                  <span className="flex items-center gap-2">
+                    <span className="h-2 w-2 rounded-full bg-slate-400" />
+                    FREE
+                  </span>
+                </SelectItem>
+                <SelectItem value="PRO">
+                  <span className="flex items-center gap-2">
+                    <span className="h-2 w-2 rounded-full bg-violet-500" />
+                    PRO
+                  </span>
+                </SelectItem>
+                <SelectItem value="ENTERPRISE">
+                  <span className="flex items-center gap-2">
+                    <span className="h-2 w-2 rounded-full bg-amber-500" />
+                    ENTERPRISE
+                  </span>
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        )}
 
         {/* User Profile */}
         <div className={cn(

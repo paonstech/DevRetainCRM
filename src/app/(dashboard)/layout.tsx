@@ -3,29 +3,28 @@
 import { useState, useEffect } from "react"
 import { usePathname } from "next/navigation"
 import { Sidebar } from "@/components/layout/Sidebar"
+import { SubscriptionProvider, useSubscription } from "@/contexts/subscription-context"
 import { cn } from "@/lib/utils"
 
-// Mock user - in real app, this would come from NextAuth session
-const mockUser = {
-  name: "Ahmet Yılmaz",
-  email: "ahmet@devretain.com",
-  plan: "PRO",
-}
-
-// Mock notifications
-const mockNotifications = {
-  matches: 3,
-  messages: 2,
-  total: 5,
-}
-
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+// Inner component that uses subscription context
+function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const { plan } = useSubscription()
+
+  // Mock user - in real app, this would come from NextAuth session
+  const mockUser = {
+    name: "Ahmet Yılmaz",
+    email: "ahmet@devretain.com",
+    plan: plan,
+  }
+
+  // Mock notifications
+  const mockNotifications = {
+    matches: 3,
+    messages: 2,
+    total: 5,
+  }
 
   // Determine user role based on pathname (in real app, this comes from session)
   const getUserRole = (): "CREATOR" | "SPONSOR" | "ADMIN" => {
@@ -70,5 +69,17 @@ export default function DashboardLayout({
         {children}
       </main>
     </div>
+  )
+}
+
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <SubscriptionProvider>
+      <DashboardLayoutInner>{children}</DashboardLayoutInner>
+    </SubscriptionProvider>
   )
 }

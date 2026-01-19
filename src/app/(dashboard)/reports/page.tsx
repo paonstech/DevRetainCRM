@@ -22,12 +22,20 @@ import {
   formatShortDate,
   type ReportData,
 } from "@/lib/report-generator"
+import { useSubscription } from "@/contexts/subscription-context"
+import { UpgradeModal } from "@/components/subscription/upgrade-modal"
+import { Lock, Unlock, Crown } from "lucide-react"
 
 export default function ReportsPage() {
   const { toast } = useToast()
   const [isLoading, setIsLoading] = useState(false)
   const [isExporting, setIsExporting] = useState(false)
   const [reportData, setReportData] = useState<ReportData | null>(null)
+  const [upgradeModalOpen, setUpgradeModalOpen] = useState(false)
+  
+  // Subscription check
+  const { isProOrHigher, plan } = useSubscription()
+  const hasPDFExport = isProOrHigher()
   
   // Varsayılan tarih aralığı: Son 6 ay
   const [startDate, setStartDate] = useState<Date | undefined>(undefined)
@@ -81,6 +89,12 @@ export default function ReportsPage() {
   }
 
   const handleExportPDF = async () => {
+    // Check subscription before export
+    if (!hasPDFExport) {
+      setUpgradeModalOpen(true)
+      return
+    }
+    
     if (!reportData) return
 
     setIsExporting(true)
@@ -201,17 +215,25 @@ export default function ReportsPage() {
                 <Button
                   onClick={handleExportPDF}
                   disabled={isExporting || !reportData}
-                  className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600"
+                  className={hasPDFExport 
+                    ? "bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600" 
+                    : "bg-slate-400 hover:bg-slate-500"
+                  }
                 >
                   {isExporting ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       İndiriliyor...
                     </>
-                  ) : (
+                  ) : hasPDFExport ? (
                     <>
                       <Download className="mr-2 h-4 w-4" />
                       PDF İndir
+                    </>
+                  ) : (
+                    <>
+                      <Lock className="mr-2 h-4 w-4" />
+                      Pro ile İndir
                     </>
                   )}
                 </Button>
@@ -252,6 +274,14 @@ export default function ReportsPage() {
 
       {/* Toast Provider */}
       <Toaster />
+
+      {/* Upgrade Modal */}
+      <UpgradeModal 
+        open={upgradeModalOpen} 
+        onOpenChange={setUpgradeModalOpen}
+        feature="hasPDFExport"
+        requiredPlan="PRO"
+      />
     </div>
   )
 }

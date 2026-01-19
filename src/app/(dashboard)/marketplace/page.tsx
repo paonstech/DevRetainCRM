@@ -55,6 +55,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
+import { useSubscription } from "@/contexts/subscription-context"
+import { UpgradeModal } from "@/components/subscription/upgrade-modal"
 
 // Mock user credits
 const userCredits = 25
@@ -311,7 +313,16 @@ export default function MarketplacePage() {
       }
     })
 
+  // Subscription check
+  const { isProOrHigher, plan } = useSubscription()
+  const [upgradeModalOpen, setUpgradeModalOpen] = useState(false)
+  const hasMarketplaceAccess = isProOrHigher()
+
   const handlePurchase = (report: any) => {
+    if (!hasMarketplaceAccess) {
+      setUpgradeModalOpen(true)
+      return
+    }
     setSelectedReport(report)
     setPurchaseDialogOpen(true)
   }
@@ -494,11 +505,20 @@ export default function MarketplacePage() {
                         </div>
                         <Button 
                           size="sm" 
-                          className="bg-violet-600 hover:bg-violet-700"
+                          className={hasMarketplaceAccess ? "bg-violet-600 hover:bg-violet-700" : "bg-slate-400 hover:bg-slate-500"}
                           onClick={() => handlePurchase(report)}
                         >
-                          <Lock className="h-4 w-4 mr-1" />
-                          Raporu Aç
+                          {hasMarketplaceAccess ? (
+                            <>
+                              <Unlock className="h-4 w-4 mr-1" />
+                              Aboneliğinle Görüntüle
+                            </>
+                          ) : (
+                            <>
+                              <Lock className="h-4 w-4 mr-1" />
+                              Pro Gerekli
+                            </>
+                          )}
                         </Button>
                       </div>
                     </div>
@@ -595,11 +615,20 @@ export default function MarketplacePage() {
                         </div>
                         <Button 
                           size="sm" 
-                          className="bg-emerald-600 hover:bg-emerald-700"
+                          className={hasMarketplaceAccess ? "bg-emerald-600 hover:bg-emerald-700" : "bg-slate-400 hover:bg-slate-500"}
                           onClick={() => handlePurchase(report)}
                         >
-                          <Lock className="h-4 w-4 mr-1" />
-                          Karneyi Aç
+                          {hasMarketplaceAccess ? (
+                            <>
+                              <Unlock className="h-4 w-4 mr-1" />
+                              Aboneliğinle Görüntüle
+                            </>
+                          ) : (
+                            <>
+                              <Lock className="h-4 w-4 mr-1" />
+                              Pro Gerekli
+                            </>
+                          )}
                         </Button>
                       </div>
                     </div>
@@ -885,6 +914,14 @@ export default function MarketplacePage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Upgrade Modal for non-Pro users */}
+      <UpgradeModal 
+        open={upgradeModalOpen} 
+        onOpenChange={setUpgradeModalOpen}
+        feature="hasMarketplaceAccess"
+        requiredPlan="PRO"
+      />
     </div>
   )
 }
