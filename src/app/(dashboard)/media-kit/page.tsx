@@ -161,6 +161,7 @@ const fileTypeConfig = {
 
 export default function MediaKitPage() {
   const { toast } = useToast()
+  const { locale } = useLocale()
   const [activeTab, setActiveTab] = useState("profile")
   const [files, setFiles] = useState(initialFiles)
   const [isEditing, setIsEditing] = useState(false)
@@ -170,6 +171,57 @@ export default function MediaKitPage() {
   const [isSaving, setIsSaving] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // Localized texts
+  const t = {
+    mediaKit: locale === 'tr' ? 'Media Kit' : 'Media Kit',
+    dashboard: locale === 'tr' ? 'Dashboard' : 'Dashboard',
+    profile: locale === 'tr' ? 'Profil' : 'Profile',
+    files: locale === 'tr' ? 'Dosyalar' : 'Files',
+    statistics: locale === 'tr' ? 'İstatistikler' : 'Statistics',
+    pricing: locale === 'tr' ? 'Fiyatlandırma' : 'Pricing',
+    editProfile: locale === 'tr' ? 'Profili Düzenle' : 'Edit Profile',
+    saveChanges: locale === 'tr' ? 'Değişiklikleri Kaydet' : 'Save Changes',
+    cancel: locale === 'tr' ? 'İptal' : 'Cancel',
+    name: locale === 'tr' ? 'İsim' : 'Name',
+    tagline: locale === 'tr' ? 'Slogan' : 'Tagline',
+    bio: locale === 'tr' ? 'Biyografi' : 'Bio',
+    category: locale === 'tr' ? 'Kategori' : 'Category',
+    uploadFiles: locale === 'tr' ? 'Dosya Yükle' : 'Upload Files',
+    dragDrop: locale === 'tr' ? 'Sürükle & Bırak veya tıklayarak dosya seçin' : 'Drag & Drop or click to select files',
+    supportedFormats: locale === 'tr' ? 'Desteklenen formatlar: PDF, PPTX, XLSX, PNG, JPG' : 'Supported formats: PDF, PPTX, XLSX, PNG, JPG',
+    yourFiles: locale === 'tr' ? 'Dosyalarınız' : 'Your Files',
+    noFiles: locale === 'tr' ? 'Henüz dosya yüklenmedi' : 'No files uploaded yet',
+    visible: locale === 'tr' ? 'Görünür' : 'Visible',
+    hidden: locale === 'tr' ? 'Gizli' : 'Hidden',
+    delete: locale === 'tr' ? 'Sil' : 'Delete',
+    verifiedStats: locale === 'tr' ? 'Doğrulanmış İstatistikler' : 'Verified Statistics',
+    followers: locale === 'tr' ? 'Takipçi' : 'Followers',
+    avgROI: locale === 'tr' ? 'Ort. ROI' : 'Avg. ROI',
+    rooScore: locale === 'tr' ? 'ROO Skoru' : 'ROO Score',
+    campaigns: locale === 'tr' ? 'Kampanya' : 'Campaigns',
+    audienceDemo: locale === 'tr' ? 'Kitle Demografisi' : 'Audience Demographics',
+    age: locale === 'tr' ? 'Yaş' : 'Age',
+    gender: locale === 'tr' ? 'Cinsiyet' : 'Gender',
+    location: locale === 'tr' ? 'Konum' : 'Location',
+    pricingSettings: locale === 'tr' ? 'Fiyatlandırma Ayarları' : 'Pricing Settings',
+    contentType: locale === 'tr' ? 'İçerik Tipi' : 'Content Type',
+    price: locale === 'tr' ? 'Fiyat' : 'Price',
+    shareProfile: locale === 'tr' ? 'Profili Paylaş' : 'Share Profile',
+    copyLink: locale === 'tr' ? 'Linki Kopyala' : 'Copy Link',
+    copied: locale === 'tr' ? 'Kopyalandı!' : 'Copied!',
+    saving: locale === 'tr' ? 'Kaydediliyor...' : 'Saving...',
+    uploading: locale === 'tr' ? 'Yükleniyor...' : 'Uploading...',
+    profileSaved: locale === 'tr' ? 'Profil Kaydedildi! ✨' : 'Profile Saved! ✨',
+    profileSavedDesc: locale === 'tr' ? 'Değişiklikleriniz başarıyla kaydedildi.' : 'Your changes have been saved successfully.',
+    fileUploaded: locale === 'tr' ? 'Dosya Yüklendi! 📁' : 'File Uploaded! 📁',
+    fileUploadedDesc: locale === 'tr' ? 'başarıyla yüklendi.' : 'has been uploaded successfully.',
+    fileDeleted: locale === 'tr' ? 'Dosya Silindi' : 'File Deleted',
+    fileDeletedDesc: locale === 'tr' ? 'Dosya başarıyla silindi.' : 'File has been deleted successfully.',
+    visibilityChanged: locale === 'tr' ? 'Görünürlük Değiştirildi' : 'Visibility Changed',
+    nowVisible: locale === 'tr' ? 'artık görünür.' : 'is now visible.',
+    nowHidden: locale === 'tr' ? 'artık gizli.' : 'is now hidden.',
+  }
 
   const formatFileSize = (bytes: number) => {
     if (bytes >= 1000000) {
@@ -189,7 +241,7 @@ export default function MediaKitPage() {
   }
 
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('tr-TR', {
+    return new Intl.NumberFormat(locale === 'tr' ? 'tr-TR' : 'en-US', {
       style: 'currency',
       currency: 'TRY',
       maximumFractionDigits: 0,

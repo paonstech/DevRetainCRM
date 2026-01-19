@@ -26,14 +26,10 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
     total: 5,
   }
 
-  // Determine user role based on pathname (in real app, this comes from session)
-  const getUserRole = (): "CREATOR" | "SPONSOR" | "ADMIN" => {
-    if (pathname.startsWith("/admin")) return "ADMIN"
-    if (pathname.startsWith("/sponsor")) return "SPONSOR"
-    return "CREATOR"
-  }
-
-  const userRole = getUserRole()
+  // In a real app, user role would come from NextAuth session, not pathname
+  // For demo purposes, we'll use a fixed role that persists across pages
+  // The role should NOT change based on which page the user visits
+  const [userRole] = useState<"CREATOR" | "SPONSOR" | "ADMIN">("CREATOR")
 
   // Handle responsive behavior
   useEffect(() => {

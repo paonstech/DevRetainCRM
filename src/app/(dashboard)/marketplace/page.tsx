@@ -258,6 +258,7 @@ const creditPackages = [
 ]
 
 export default function MarketplacePage() {
+  const { locale } = useLocale()
   const [activeTab, setActiveTab] = useState("creators")
   const [searchQuery, setSearchQuery] = useState("")
   const [sortBy, setSortBy] = useState("trustScore")
@@ -265,6 +266,41 @@ export default function MarketplacePage() {
   const [purchaseDialogOpen, setPurchaseDialogOpen] = useState(false)
   const [creditsDialogOpen, setCreditsDialogOpen] = useState(false)
   const [paymentMethod, setPaymentMethod] = useState<"credits" | "cash">("credits")
+
+  // Localized texts
+  const t = {
+    marketplace: locale === 'tr' ? 'Rapor Pazaryeri' : 'Report Marketplace',
+    marketplaceDesc: locale === 'tr' ? 'Doğrulanmış performans raporlarını keşfedin ve satın alın' : 'Discover and purchase verified performance reports',
+    searchReports: locale === 'tr' ? 'Rapor ara...' : 'Search reports...',
+    creatorReports: locale === 'tr' ? 'Yayıncı Raporları' : 'Creator Reports',
+    sponsorReports: locale === 'tr' ? 'Sponsor Karneleri' : 'Sponsor Report Cards',
+    sortBy: locale === 'tr' ? 'Sırala' : 'Sort by',
+    trustScore: locale === 'tr' ? 'Güven Skoru' : 'Trust Score',
+    price: locale === 'tr' ? 'Fiyat' : 'Price',
+    popularity: locale === 'tr' ? 'Popülerlik' : 'Popularity',
+    filters: locale === 'tr' ? 'Filtreler' : 'Filters',
+    verified: locale === 'tr' ? 'Doğrulanmış' : 'Verified',
+    avgROI: locale === 'tr' ? 'Ort. ROI' : 'Avg. ROI',
+    avgROO: locale === 'tr' ? 'Ort. ROO' : 'Avg. ROO',
+    followers: locale === 'tr' ? 'Takipçi' : 'Followers',
+    campaigns: locale === 'tr' ? 'Kampanya' : 'Campaigns',
+    viewReport: locale === 'tr' ? 'Raporu Görüntüle' : 'View Report',
+    buyReport: locale === 'tr' ? 'Raporu Satın Al' : 'Buy Report',
+    credits: locale === 'tr' ? 'kredi' : 'credits',
+    or: locale === 'tr' ? 'veya' : 'or',
+    payWithCredits: locale === 'tr' ? 'Kredi ile Öde' : 'Pay with Credits',
+    payWithCard: locale === 'tr' ? 'Kart ile Öde' : 'Pay with Card',
+    yourCredits: locale === 'tr' ? 'Krediniz' : 'Your Credits',
+    buyCredits: locale === 'tr' ? 'Kredi Satın Al' : 'Buy Credits',
+    purchase: locale === 'tr' ? 'Satın Al' : 'Purchase',
+    cancel: locale === 'tr' ? 'İptal' : 'Cancel',
+    proRequired: locale === 'tr' ? 'Pro Gerekli' : 'Pro Required',
+    viewWithSub: locale === 'tr' ? 'Aboneliğinle Görüntüle' : 'View with Subscription',
+    paymentSpeed: locale === 'tr' ? 'Ödeme Hızı' : 'Payment Speed',
+    collabScore: locale === 'tr' ? 'İşbirliği Skoru' : 'Collaboration Score',
+    totalSponsored: locale === 'tr' ? 'Toplam Sponsorluk' : 'Total Sponsored',
+    noResults: locale === 'tr' ? 'Sonuç bulunamadı' : 'No results found',
+  }
 
   const formatNumber = (value: number) => {
     if (value >= 1000000) {
@@ -277,9 +313,9 @@ export default function MarketplacePage() {
   }
 
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('tr-TR', {
+    return new Intl.NumberFormat(locale === 'tr' ? 'tr-TR' : 'en-US', {
       style: 'currency',
-      currency: 'TRY',
+      currency: locale === 'tr' ? 'TRY' : 'USD',
       maximumFractionDigits: 0,
     }).format(value)
   }

@@ -92,6 +92,7 @@ function generateMatches() {
 
 export default function MatchesPage() {
   const { toast } = useToast()
+  const { locale } = useLocale()
   const [activeTab, setActiveTab] = useState("recommendations")
   const [userType, setUserType] = useState<"sponsor" | "creator">("sponsor")
   const [matches, setMatches] = useState<MatchResult[]>([])
@@ -107,6 +108,51 @@ export default function MatchesPage() {
   const [favorites, setFavorites] = useState<string[]>([])
   const [dismissedMatches, setDismissedMatches] = useState<string[]>([])
 
+  // Localized texts
+  const t = {
+    matches: locale === 'tr' ? 'Eşleşmeler' : 'Matches',
+    matchesDesc: locale === 'tr' ? 'Size özel sponsorluk fırsatlarını keşfedin' : 'Discover sponsorship opportunities tailored for you',
+    recommendations: locale === 'tr' ? 'Öneriler' : 'Recommendations',
+    notifications: locale === 'tr' ? 'Bildirimler' : 'Notifications',
+    viewAsSponsor: locale === 'tr' ? 'Sponsor Olarak' : 'As Sponsor',
+    viewAsCreator: locale === 'tr' ? 'Yayıncı Olarak' : 'As Creator',
+    sortBy: locale === 'tr' ? 'Sırala' : 'Sort by',
+    matchScore: locale === 'tr' ? 'Eşleşme Skoru' : 'Match Score',
+    potentialROI: locale === 'tr' ? 'Potansiyel ROI' : 'Potential ROI',
+    potentialROO: locale === 'tr' ? 'Potansiyel ROO' : 'Potential ROO',
+    filterConfidence: locale === 'tr' ? 'Güven Seviyesi' : 'Confidence Level',
+    all: locale === 'tr' ? 'Tümü' : 'All',
+    high: locale === 'tr' ? 'Yüksek' : 'High',
+    medium: locale === 'tr' ? 'Orta' : 'Medium',
+    low: locale === 'tr' ? 'Düşük' : 'Low',
+    contact: locale === 'tr' ? 'İletişime Geç' : 'Contact',
+    viewProfile: locale === 'tr' ? 'Profil' : 'Profile',
+    like: locale === 'tr' ? 'Beğen' : 'Like',
+    dismiss: locale === 'tr' ? 'Reddet' : 'Dismiss',
+    matchReasons: locale === 'tr' ? 'Eşleşme Nedenleri' : 'Match Reasons',
+    scoreBreakdown: locale === 'tr' ? 'Skor Detayı' : 'Score Breakdown',
+    audienceMatch: locale === 'tr' ? 'Kitle Uyumu' : 'Audience Match',
+    performanceMatch: locale === 'tr' ? 'Performans Uyumu' : 'Performance Match',
+    categoryMatch: locale === 'tr' ? 'Kategori Uyumu' : 'Category Match',
+    budgetMatch: locale === 'tr' ? 'Bütçe Uyumu' : 'Budget Match',
+    sendMessage: locale === 'tr' ? 'Mesaj Gönder' : 'Send Message',
+    message: locale === 'tr' ? 'Mesaj' : 'Message',
+    sending: locale === 'tr' ? 'Gönderiliyor...' : 'Sending...',
+    cancel: locale === 'tr' ? 'İptal' : 'Cancel',
+    close: locale === 'tr' ? 'Kapat' : 'Close',
+    viewDetails: locale === 'tr' ? 'Detayları Gör' : 'View Details',
+    newMatch: locale === 'tr' ? 'Yeni Eşleşme!' : 'New Match!',
+    messageRequired: locale === 'tr' ? 'Mesaj Gerekli' : 'Message Required',
+    pleaseWriteMessage: locale === 'tr' ? 'Lütfen bir mesaj yazın.' : 'Please write a message.',
+    messageSent: locale === 'tr' ? 'Mesaj Gönderildi! 📨' : 'Message Sent! 📨',
+    messageSentDesc: locale === 'tr' ? 'Mesajınız başarıyla iletildi.' : 'Your message has been sent successfully.',
+    addedToFavorites: locale === 'tr' ? 'Favorilere Eklendi' : 'Added to Favorites',
+    removedFromFavorites: locale === 'tr' ? 'Favorilerden Çıkarıldı' : 'Removed from Favorites',
+    matchDismissed: locale === 'tr' ? 'Eşleşme Reddedildi' : 'Match Dismissed',
+    noMatches: locale === 'tr' ? 'Henüz eşleşme bulunamadı' : 'No matches found yet',
+    noNotifications: locale === 'tr' ? 'Bildirim yok' : 'No notifications',
+  }
+
   useEffect(() => {
     const { matches: generatedMatches, notifications: generatedNotifications } = generateMatches()
     setMatches(generatedMatches)
@@ -117,8 +163,8 @@ export default function MatchesPage() {
   const handleContact = async () => {
     if (!selectedMatch || !contactMessage) {
       toast({
-        title: "Mesaj Gerekli",
-        description: "Lütfen bir mesaj yazın.",
+        title: t.messageRequired,
+        description: t.pleaseWriteMessage,
         variant: "destructive",
       })
       return
