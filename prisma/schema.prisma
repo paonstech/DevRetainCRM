@@ -1,0 +1,1111 @@
+// Sponsorluk Yönetim CRM - Database Schema
+// Tech Stack: Next.js (App Router), TypeScript, Tailwind CSS, Shadcn/UI, Prisma ORM, PostgreSQL
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================================
+// ENUMS
+// ============================================================================
+
+enum OrganizationType {
+  YOUTUBER
+  CLUB
+  BUSINESS
+}
+
+// System-level roles (for admin panel access)
+enum SystemRole {
+  USER
+  ADMIN
+  SUPER_ADMIN
+}
+
+// Organization-level roles (for org permissions)
+enum UserRole {
+  OWNER
+  ADMIN
+  MANAGER
+  MEMBER
+  VIEWER
+}
+
+enum CampaignStatus {
+  DRAFT
+  PENDING_APPROVAL
+  ACTIVE
+  PAUSED
+  COMPLETED
+  CANCELLED
+}
+
+enum CampaignType {
+  BRAND_AWARENESS
+  PRODUCT_LAUNCH
+  EVENT_SPONSORSHIP
+  CONTENT_SPONSORSHIP
+  AFFILIATE
+  INFLUENCER
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+}
+
+enum TransactionCategory {
+  AD_SPEND
+  SPONSORSHIP_FEE
+  COMMISSION
+  BONUS
+  REFUND
+  PLATFORM_FEE
+  OTHER
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  BANK_TRANSFER
+  CREDIT_CARD
+  PAYPAL
+  CRYPTO
+  CHECK
+  CASH
+  OTHER
+}
+
+enum MetricType {
+  CLICK
+  IMPRESSION
+  VIEW
+  CONVERSION
+  ENGAGEMENT
+  REACH
+  SHARE
+  COMMENT
+  LIKE
+  SUBSCRIBE
+}
+
+enum MetricSource {
+  YOUTUBE
+  INSTAGRAM
+  TIKTOK
+  TWITTER
+  FACEBOOK
+  LINKEDIN
+  WEBSITE
+  EMAIL
+  OTHER
+}
+
+enum RFMSegment {
+  CHAMPIONS
+  LOYAL_CUSTOMERS
+  POTENTIAL_LOYALIST
+  NEW_CUSTOMERS
+  PROMISING
+  NEED_ATTENTION
+  ABOUT_TO_SLEEP
+  AT_RISK
+  CANT_LOSE_THEM
+  HIBERNATING
+  LOST
+}
+
+enum SponsorTier {
+  BRONZE
+  SILVER
+  GOLD
+  PLATINUM
+  DIAMOND
+}
+
+enum ContactType {
+  PRIMARY
+  BILLING
+  MARKETING
+  TECHNICAL
+  LEGAL
+}
+
+enum SubscriptionPlan {
+  FREE
+  PRO
+  ENTERPRISE
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  PAST_DUE
+  CANCELED
+  INCOMPLETE
+  INCOMPLETE_EXPIRED
+  TRIALING
+  UNPAID
+  PAUSED
+}
+
+enum ObjectiveType {
+  AWARENESS           // Marka Bilinirliği
+  REACH               // Erişim
+  ENGAGEMENT          // Etkileşim (like, comment, share)
+  VIDEO_VIEWS         // Video İzlenme
+  WEBSITE_TRAFFIC     // Web Sitesi Trafiği
+  LEAD_GENERATION     // Lead Oluşturma
+  APP_DOWNLOAD        // Uygulama İndirme
+  SALES               // Satış
+  SIGN_UP             // Kayıt/Üyelik
+  BRAND_SENTIMENT     // Marka Algısı
+  SOCIAL_FOLLOWERS    // Sosyal Medya Takipçi
+  EMAIL_SUBSCRIBERS   // E-posta Aboneleri
+  CONTENT_CREATION    // İçerik Üretimi
+  EVENT_ATTENDANCE    // Etkinlik Katılımı
+  CUSTOM              // Özel Hedef
+}
+
+enum ObjectiveStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  ON_TRACK
+  AT_RISK
+  BEHIND
+  COMPLETED
+  EXCEEDED
+}
+
+// ============================================================================
+// USERS & ORGANIZATIONS
+// ============================================================================
+
+model User {
+  id                String      @id @default(cuid())
+  email             String      @unique
+  emailVerified     DateTime?
+  passwordHash      String?
+  name              String?     // For NextAuth compatibility
+  firstName         String?
+  lastName          String?
+  image             String?     // For NextAuth compatibility (avatar)
+  avatar            String?
+  phone             String?
+  timezone          String      @default("Europe/Istanbul")
+  language          String      @default("tr")
+  isActive          Boolean     @default(true)
+  isSuspended       Boolean     @default(false)
+  suspendedAt       DateTime?
+  suspendedReason   String?
+  lastLoginAt       DateTime?
+  
+  // System-level role (for admin panel access)
+  systemRole        SystemRole  @default(USER)
+  
+  // NextAuth Relations
+  accounts          Account[]
+  sessions          Session[]
+  
+  // App Relations
+  memberships       OrganizationMember[]
+  createdCampaigns  Campaign[]           @relation("CampaignCreator")
+  assignedCampaigns CampaignAssignment[]
+  activityLogs      ActivityLog[]
+  notifications     Notification[]
+  
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  @@index([email])
+  @@index([isActive])
+  @@index([systemRole])
+  @@map("users")
+}
+
+// NextAuth.js Models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+model Organization {
+  id                String           @id @default(cuid())
+  name              String
+  slug              String           @unique
+  type              OrganizationType
+  description       String?
+  logo              String?
+  website           String?
+  email             String?
+  phone             String?
+  
+  // Address
+  address           String?
+  city              String?
+  state             String?
+  country           String?          @default("TR")
+  postalCode        String?
+  
+  // Business Info
+  taxId             String?
+  registrationNo    String?
+  
+  // Social Media
+  youtubeChannel    String?
+  instagramHandle   String?
+  tiktokHandle      String?
+  twitterHandle     String?
+  linkedinPage      String?
+  
+  // Settings
+  currency          String           @default("TRY")
+  fiscalYearStart   Int              @default(1) // Month (1-12)
+  isActive          Boolean          @default(true)
+  
+  // Relations
+  members           OrganizationMember[]
+  campaigns         Campaign[]
+  sponsors          Sponsor[]
+  transactions      Transaction[]
+  metrics           Metric[]
+  activityLogs      ActivityLog[]
+  subscription      Subscription?
+  
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+
+  @@index([slug])
+  @@index([type])
+  @@index([isActive])
+  @@map("organizations")
+}
+
+model OrganizationMember {
+  id             String       @id @default(cuid())
+  role           UserRole     @default(MEMBER)
+  title          String?      // Job title within org
+  department     String?
+  isActive       Boolean      @default(true)
+  joinedAt       DateTime     @default(now())
+  
+  // Relations
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@unique([userId, organizationId])
+  @@index([organizationId])
+  @@index([role])
+  @@map("organization_members")
+}
+
+// ============================================================================
+// SPONSORS
+// ============================================================================
+
+model Sponsor {
+  id                String       @id @default(cuid())
+  
+  // Company Info
+  companyName       String
+  industry          String?
+  website           String?
+  logo              String?
+  description       String?
+  
+  // Address
+  address           String?
+  city              String?
+  state             String?
+  country           String?      @default("TR")
+  postalCode        String?
+  
+  // Business Info
+  taxId             String?
+  registrationNo    String?
+  
+  // Sponsor Classification
+  tier              SponsorTier  @default(BRONZE)
+  isActive          Boolean      @default(true)
+  
+  // Acquisition Info
+  acquisitionSource String?      // How we got this sponsor
+  acquisitionDate   DateTime     @default(now())
+  
+  // Notes
+  internalNotes     String?
+  
+  // Relations
+  organizationId    String
+  organization      Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  contacts          SponsorContact[]
+  campaigns         CampaignSponsor[]
+  transactions      Transaction[]
+  rfmScores         RFMScore[]
+  activityLogs      ActivityLog[]
+  
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  @@index([organizationId])
+  @@index([companyName])
+  @@index([tier])
+  @@index([isActive])
+  @@map("sponsors")
+}
+
+model SponsorContact {
+  id           String      @id @default(cuid())
+  type         ContactType @default(PRIMARY)
+  
+  // Contact Info
+  firstName    String
+  lastName     String
+  email        String?
+  phone        String?
+  mobile       String?
+  
+  // Position
+  jobTitle     String?
+  department   String?
+  
+  // Social
+  linkedinUrl  String?
+  
+  // Preferences
+  preferredContact String?   // email, phone, etc.
+  notes        String?
+  isPrimary    Boolean     @default(false)
+  isActive     Boolean     @default(true)
+  
+  // Relations
+  sponsorId    String
+  sponsor      Sponsor     @relation(fields: [sponsorId], references: [id], onDelete: Cascade)
+  
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  @@index([sponsorId])
+  @@index([email])
+  @@index([isPrimary])
+  @@map("sponsor_contacts")
+}
+
+// ============================================================================
+// CAMPAIGNS
+// ============================================================================
+
+model Campaign {
+  id                String         @id @default(cuid())
+  name              String
+  slug              String
+  description       String?
+  type              CampaignType
+  status            CampaignStatus @default(DRAFT)
+  
+  // Budget & Financials
+  budgetTotal       Decimal        @db.Decimal(15, 2)
+  budgetSpent       Decimal        @default(0) @db.Decimal(15, 2)
+  currency          String         @default("TRY")
+  
+  // Timeline
+  startDate         DateTime
+  endDate           DateTime
+  
+  // Goals & Targets
+  targetImpressions Int?
+  targetClicks      Int?
+  targetConversions Int?
+  targetROI         Decimal?       @db.Decimal(5, 2) // Percentage
+  
+  // Actual Results (denormalized for quick access)
+  totalImpressions  Int            @default(0)
+  totalClicks       Int            @default(0)
+  totalConversions  Int            @default(0)
+  actualROI         Decimal?       @db.Decimal(5, 2)
+  
+  // Content
+  briefDocument     String?        // URL to brief
+  contractDocument  String?        // URL to contract
+  assets            Json?          // Array of asset URLs
+  
+  // Notes
+  internalNotes     String?
+  clientNotes       String?
+  
+  // ROO (Return on Objectives) - Denormalized for quick access
+  rooScore          Decimal?       @db.Decimal(5, 2) // Calculated ROO score (0-100+)
+  rooCalculatedAt   DateTime?      // Last ROO calculation time
+  
+  // Relations
+  organizationId    String
+  organization      Organization         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdById       String
+  createdBy         User                 @relation("CampaignCreator", fields: [createdById], references: [id])
+  sponsors          CampaignSponsor[]
+  assignments       CampaignAssignment[]
+  transactions      Transaction[]
+  metrics           Metric[]
+  milestones        CampaignMilestone[]
+  objectives        CampaignObjective[]
+  activityLogs      ActivityLog[]
+  
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  @@unique([organizationId, slug])
+  @@index([organizationId])
+  @@index([status])
+  @@index([type])
+  @@index([startDate, endDate])
+  @@index([rooScore])
+  @@map("campaigns")
+}
+
+model CampaignSponsor {
+  id                String   @id @default(cuid())
+  
+  // Contribution
+  contributionAmount Decimal  @db.Decimal(15, 2)
+  contributionType   String?  // cash, in-kind, etc.
+  
+  // Contract
+  contractStartDate  DateTime?
+  contractEndDate    DateTime?
+  contractDocument   String?
+  
+  // Terms
+  terms              String?
+  deliverables       Json?    // Array of deliverable items
+  
+  // Status
+  isConfirmed        Boolean  @default(false)
+  confirmedAt        DateTime?
+  
+  // Relations
+  campaignId         String
+  campaign           Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  sponsorId          String
+  sponsor            Sponsor  @relation(fields: [sponsorId], references: [id], onDelete: Cascade)
+  
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@unique([campaignId, sponsorId])
+  @@index([campaignId])
+  @@index([sponsorId])
+  @@map("campaign_sponsors")
+}
+
+model CampaignAssignment {
+  id         String   @id @default(cuid())
+  role       String?  // Campaign Manager, Content Creator, etc.
+  notes      String?
+  
+  // Relations
+  campaignId String
+  campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([campaignId, userId])
+  @@index([campaignId])
+  @@index([userId])
+  @@map("campaign_assignments")
+}
+
+model CampaignMilestone {
+  id          String    @id @default(cuid())
+  name        String
+  description String?
+  dueDate     DateTime
+  completedAt DateTime?
+  isCompleted Boolean   @default(false)
+  sortOrder   Int       @default(0)
+  
+  // Relations
+  campaignId  String
+  campaign    Campaign  @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([campaignId])
+  @@index([dueDate])
+  @@map("campaign_milestones")
+}
+
+// ============================================================================
+// ROO - CAMPAIGN OBJECTIVES (Return on Objectives)
+// ============================================================================
+
+model CampaignObjective {
+  id              String          @id @default(cuid())
+  
+  // Objective Definition
+  type            ObjectiveType
+  name            String          // Custom name for the objective
+  description     String?
+  
+  // Target Values
+  targetValue     Decimal         @db.Decimal(15, 2) // Target to achieve
+  unit            String          @default("count") // count, percentage, currency, etc.
+  
+  // Weight for ROO Score calculation
+  weight          Decimal         @db.Decimal(5, 2) @default(1.0) // Weight coefficient (e.g., 1.0, 1.5, 2.0)
+  
+  // Current Progress (denormalized for quick access)
+  currentValue    Decimal         @default(0) @db.Decimal(15, 2)
+  achievementRate Decimal?        @db.Decimal(5, 2) // (currentValue / targetValue) * 100
+  status          ObjectiveStatus @default(NOT_STARTED)
+  
+  // Weighted Score Contribution
+  weightedScore   Decimal?        @db.Decimal(5, 2) // (achievementRate * weight)
+  
+  // Timeline
+  startDate       DateTime?
+  endDate         DateTime?
+  
+  // Tracking
+  isActive        Boolean         @default(true)
+  sortOrder       Int             @default(0)
+  
+  // Relations
+  campaignId      String
+  campaign        Campaign        @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  progressRecords ObjectiveProgress[]
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@index([campaignId])
+  @@index([type])
+  @@index([status])
+  @@index([campaignId, isActive])
+  @@map("campaign_objectives")
+}
+
+model ObjectiveProgress {
+  id              String   @id @default(cuid())
+  
+  // Progress Value
+  value           Decimal  @db.Decimal(15, 2) // The recorded value at this point
+  previousValue   Decimal? @db.Decimal(15, 2) // Previous recorded value
+  delta           Decimal? @db.Decimal(15, 2) // Change from previous (value - previousValue)
+  
+  // Achievement at this point
+  achievementRate Decimal? @db.Decimal(5, 2) // Percentage achieved at this recording
+  
+  // Recording Details
+  recordedAt      DateTime @default(now())
+  periodStart     DateTime? // If this is for a specific period
+  periodEnd       DateTime?
+  
+  // Source of data
+  source          String?  // manual, api, webhook, etc.
+  sourceReference String?  // API endpoint, import file name, etc.
+  
+  // Notes
+  notes           String?
+  
+  // Relations
+  objectiveId     String
+  objective       CampaignObjective @relation(fields: [objectiveId], references: [id], onDelete: Cascade)
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([objectiveId])
+  @@index([recordedAt])
+  @@index([objectiveId, recordedAt])
+  @@map("objective_progress")
+}
+
+// ============================================================================
+// TRANSACTIONS
+// ============================================================================
+
+model Transaction {
+  id                String              @id @default(cuid())
+  
+  // Transaction Info
+  type              TransactionType
+  category          TransactionCategory
+  status            TransactionStatus   @default(PENDING)
+  
+  // Amount
+  amount            Decimal             @db.Decimal(15, 2)
+  currency          String              @default("TRY")
+  exchangeRate      Decimal?            @db.Decimal(10, 6) // If different currency
+  
+  // Payment
+  paymentMethod     PaymentMethod?
+  paymentReference  String?             // Bank ref, check no, etc.
+  
+  // Dates
+  transactionDate   DateTime
+  dueDate           DateTime?
+  paidAt            DateTime?
+  
+  // Invoice
+  invoiceNumber     String?
+  invoiceDocument   String?             // URL to invoice
+  receiptDocument   String?             // URL to receipt
+  
+  // Description
+  description       String?
+  notes             String?
+  
+  // Tax
+  taxAmount         Decimal?            @db.Decimal(15, 2)
+  taxRate           Decimal?            @db.Decimal(5, 2)
+  
+  // Relations
+  organizationId    String
+  organization      Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  campaignId        String?
+  campaign          Campaign?           @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+  sponsorId         String?
+  sponsor           Sponsor?            @relation(fields: [sponsorId], references: [id], onDelete: SetNull)
+  
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+
+  @@index([organizationId])
+  @@index([campaignId])
+  @@index([sponsorId])
+  @@index([type])
+  @@index([status])
+  @@index([transactionDate])
+  @@index([category])
+  @@map("transactions")
+}
+
+// ============================================================================
+// METRICS
+// ============================================================================
+
+model Metric {
+  id             String       @id @default(cuid())
+  
+  // Metric Info
+  type           MetricType
+  source         MetricSource
+  value          Int          // Raw count
+  
+  // Time Period
+  recordedAt     DateTime     @default(now())
+  periodStart    DateTime?    // For aggregated metrics
+  periodEnd      DateTime?
+  
+  // Additional Data
+  metadata       Json?        // Source-specific data
+  
+  // Cost Attribution (for ROI calculation)
+  attributedCost Decimal?     @db.Decimal(15, 2)
+  
+  // Conversion Value (if applicable)
+  conversionValue Decimal?    @db.Decimal(15, 2)
+  
+  // Relations
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  campaignId     String
+  campaign       Campaign     @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([organizationId])
+  @@index([campaignId])
+  @@index([type])
+  @@index([source])
+  @@index([recordedAt])
+  @@index([campaignId, type, recordedAt])
+  @@map("metrics")
+}
+
+// ============================================================================
+// RFM SCORES (Recency, Frequency, Monetary)
+// ============================================================================
+
+model RFMScore {
+  id              String     @id @default(cuid())
+  
+  // RFM Values
+  recencyScore    Int        // 1-5 scale
+  frequencyScore  Int        // 1-5 scale
+  monetaryScore   Int        // 1-5 scale
+  
+  // Combined Score
+  rfmScore        Int        // Combined score (e.g., 555)
+  segment         RFMSegment
+  
+  // Raw Values (for reference)
+  lastTransactionDate DateTime?
+  transactionCount    Int      @default(0)
+  totalMonetary       Decimal  @default(0) @db.Decimal(15, 2)
+  averageMonetary     Decimal  @default(0) @db.Decimal(15, 2)
+  
+  // Calculation Period
+  calculatedAt    DateTime   @default(now())
+  periodStart     DateTime
+  periodEnd       DateTime
+  
+  // Previous Scores (for trend analysis)
+  previousRFMScore Int?
+  previousSegment  RFMSegment?
+  scoreChange      Int?       // Positive = improvement
+  
+  // Relations
+  sponsorId       String
+  sponsor         Sponsor    @relation(fields: [sponsorId], references: [id], onDelete: Cascade)
+  
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  @@index([sponsorId])
+  @@index([segment])
+  @@index([rfmScore])
+  @@index([calculatedAt])
+  @@index([sponsorId, calculatedAt])
+  @@map("rfm_scores")
+}
+
+// ============================================================================
+// ACTIVITY LOGS & NOTIFICATIONS
+// ============================================================================
+
+model ActivityLog {
+  id             String        @id @default(cuid())
+  
+  // Action Info
+  action         String        // created, updated, deleted, etc.
+  entityType     String        // campaign, sponsor, transaction, etc.
+  entityId       String
+  
+  // Change Details
+  changes        Json?         // { field: { old: x, new: y } }
+  description    String?
+  
+  // Context
+  ipAddress      String?
+  userAgent      String?
+  
+  // Relations
+  userId         String?
+  user           User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  organizationId String
+  organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  campaignId     String?
+  campaign       Campaign?     @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+  sponsorId      String?
+  sponsor        Sponsor?      @relation(fields: [sponsorId], references: [id], onDelete: SetNull)
+  
+  createdAt      DateTime      @default(now())
+
+  @@index([organizationId])
+  @@index([userId])
+  @@index([entityType, entityId])
+  @@index([createdAt])
+  @@map("activity_logs")
+}
+
+// ============================================================================
+// AUDIT LOGS (Critical Operations Tracking)
+// ============================================================================
+
+enum AuditSeverity {
+  LOW           // Informational
+  MEDIUM        // Standard operations
+  HIGH          // Important changes
+  CRITICAL      // Security/financial critical
+}
+
+enum AuditCategory {
+  AUTHENTICATION    // Login, logout, password changes
+  AUTHORIZATION     // Role changes, permission updates
+  SUBSCRIPTION      // Plan changes, cancellations, payments
+  FINANCIAL         // Large transactions, budget changes
+  DATA_MANAGEMENT   // Bulk operations, exports, imports
+  CAMPAIGN          // Campaign lifecycle events
+  SPONSOR           // Sponsor management
+  USER_MANAGEMENT   // User suspend, delete, role change
+  SYSTEM            // System-level operations
+  SECURITY          // Security-related events
+}
+
+model AuditLog {
+  id                String         @id @default(cuid())
+  
+  // Event Classification
+  category          AuditCategory
+  severity          AuditSeverity  @default(MEDIUM)
+  action            String         // e.g., "subscription.canceled", "campaign.deleted", "user.suspended"
+  
+  // Human-readable description
+  title             String         // Short title: "Abonelik İptal Edildi"
+  description       String?        // Detailed description
+  
+  // Entity Information
+  entityType        String         // user, organization, campaign, subscription, etc.
+  entityId          String         // ID of the affected entity
+  entityName        String?        // Name/identifier for display (e.g., campaign name)
+  
+  // Actor Information (who performed the action)
+  actorId           String?        // User ID who performed the action
+  actorEmail        String?        // Email for display (preserved even if user deleted)
+  actorName         String?        // Name for display
+  actorRole         String?        // Role at the time of action
+  actorIpAddress    String?
+  actorUserAgent    String?
+  
+  // Target Information (for user-affecting actions)
+  targetUserId      String?        // If action affects another user
+  targetUserEmail   String?
+  
+  // Organization Context
+  organizationId    String?        // Can be null for system-level operations
+  organizationName  String?        // Preserved for display
+  
+  // Data Snapshots (JSON)
+  dataBefore        Json?          // State before the change
+  dataAfter         Json?          // State after the change
+  metadata          Json?          // Additional context (request info, etc.)
+  
+  // Financial Impact (for financial operations)
+  amountInvolved    Decimal?       @db.Decimal(15, 2)
+  currency          String?
+  
+  // Status & Resolution
+  isReversible      Boolean        @default(false)
+  isReversed        Boolean        @default(false)
+  reversedAt        DateTime?
+  reversedBy        String?        // User ID who reversed
+  reversalReason    String?
+  
+  // Flags
+  requiresReview    Boolean        @default(false)
+  isReviewed        Boolean        @default(false)
+  reviewedAt        DateTime?
+  reviewedBy        String?
+  reviewNotes       String?
+  
+  createdAt         DateTime       @default(now())
+
+  @@index([category])
+  @@index([severity])
+  @@index([action])
+  @@index([entityType, entityId])
+  @@index([actorId])
+  @@index([organizationId])
+  @@index([createdAt])
+  @@index([requiresReview, isReviewed])
+  @@index([category, severity, createdAt])
+  @@map("audit_logs")
+}
+
+model Notification {
+  id          String    @id @default(cuid())
+  
+  // Notification Content
+  title       String
+  message     String
+  type        String    // info, warning, success, error
+  
+  // Status
+  isRead      Boolean   @default(false)
+  readAt      DateTime?
+  
+  // Link
+  actionUrl   String?
+  
+  // Relations
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([isRead])
+  @@index([createdAt])
+  @@map("notifications")
+}
+
+// ============================================================================
+// SUBSCRIPTIONS (Stripe Integration)
+// ============================================================================
+
+model Subscription {
+  id                    String             @id @default(cuid())
+  
+  // Stripe IDs
+  stripeCustomerId      String             @unique
+  stripeSubscriptionId  String?            @unique
+  stripePriceId         String?
+  
+  // Plan Info
+  plan                  SubscriptionPlan   @default(FREE)
+  status                SubscriptionStatus @default(ACTIVE)
+  
+  // Billing Period
+  currentPeriodStart    DateTime?
+  currentPeriodEnd      DateTime?
+  
+  // Trial
+  trialStart            DateTime?
+  trialEnd              DateTime?
+  
+  // Cancellation
+  cancelAtPeriodEnd     Boolean            @default(false)
+  canceledAt            DateTime?
+  cancellationReason    String?
+  
+  // Payment Info
+  defaultPaymentMethod  String?
+  lastPaymentStatus     String?            // succeeded, failed, pending
+  lastPaymentDate       DateTime?
+  lastPaymentAmount     Decimal?           @db.Decimal(15, 2)
+  currency              String             @default("USD")
+  
+  // Usage & Limits (based on plan)
+  campaignsLimit        Int                @default(3)   // FREE: 3, PRO: 50, ENTERPRISE: unlimited
+  sponsorsLimit         Int                @default(10)  // FREE: 10, PRO: 500, ENTERPRISE: unlimited
+  membersLimit          Int                @default(2)   // FREE: 2, PRO: 10, ENTERPRISE: unlimited
+  storageLimit          Int                @default(100) // MB: FREE: 100, PRO: 5000, ENTERPRISE: unlimited
+  
+  // Current Usage
+  campaignsUsed         Int                @default(0)
+  sponsorsUsed          Int                @default(0)
+  membersUsed           Int                @default(0)
+  storageUsed           Int                @default(0)
+  
+  // Features (based on plan)
+  hasAdvancedAnalytics  Boolean            @default(false)
+  hasRFMAnalysis        Boolean            @default(false)
+  hasROOTracking        Boolean            @default(false)
+  hasAPIAccess          Boolean            @default(false)
+  hasPrioritySupport    Boolean            @default(false)
+  hasCustomBranding     Boolean            @default(false)
+  hasExportFeatures     Boolean            @default(true)
+  
+  // Metadata
+  metadata              Json?              // Additional Stripe metadata
+  
+  // Relations
+  organizationId        String             @unique
+  organization          Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  invoices              Invoice[]
+  
+  createdAt             DateTime           @default(now())
+  updatedAt             DateTime           @updatedAt
+
+  @@index([stripeCustomerId])
+  @@index([stripeSubscriptionId])
+  @@index([plan])
+  @@index([status])
+  @@index([currentPeriodEnd])
+  @@map("subscriptions")
+}
+
+model Invoice {
+  id                    String    @id @default(cuid())
+  
+  // Stripe IDs
+  stripeInvoiceId       String    @unique
+  stripePaymentIntentId String?
+  
+  // Invoice Details
+  invoiceNumber         String?
+  status                String    // draft, open, paid, uncollectible, void
+  
+  // Amounts
+  amountDue             Decimal   @db.Decimal(15, 2)
+  amountPaid            Decimal   @db.Decimal(15, 2)
+  amountRemaining       Decimal   @db.Decimal(15, 2)
+  subtotal              Decimal   @db.Decimal(15, 2)
+  tax                   Decimal?  @db.Decimal(15, 2)
+  total                 Decimal   @db.Decimal(15, 2)
+  currency              String    @default("USD")
+  
+  // Dates
+  periodStart           DateTime?
+  periodEnd             DateTime?
+  dueDate               DateTime?
+  paidAt                DateTime?
+  
+  // URLs
+  hostedInvoiceUrl      String?
+  invoicePdfUrl         String?
+  
+  // Line Items
+  lineItems             Json?     // Array of line items from Stripe
+  
+  // Relations
+  subscriptionId        String
+  subscription          Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([subscriptionId])
+  @@index([stripeInvoiceId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("invoices")
+}
