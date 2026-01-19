@@ -4,16 +4,12 @@ import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
-  BarChart3,
   Building2,
   ChevronLeft,
   ChevronRight,
-  CreditCard,
   FileText,
   Heart,
-  Home,
   LayoutDashboard,
-  MessageSquare,
   Palette,
   Search,
   Settings,
@@ -21,16 +17,14 @@ import {
   ShoppingCart,
   Sparkles,
   Target,
-  TrendingUp,
-  Users,
   Zap,
   Youtube,
   Crown,
   Bell,
   HelpCircle,
   LogOut,
+  User,
 } from "lucide-react"
-import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
   Tooltip,
@@ -51,6 +45,11 @@ interface SidebarProps {
     matches?: number
     messages?: number
     total?: number
+  }
+  user?: {
+    name: string
+    email: string
+    plan?: string
   }
 }
 
@@ -145,7 +144,8 @@ export function Sidebar({
   userRole, 
   collapsed = false, 
   onCollapsedChange,
-  notifications = {}
+  notifications = {},
+  user = { name: "Ahmet Yılmaz", email: "ahmet@devretain.com", plan: "PRO" }
 }: SidebarProps) {
   const pathname = usePathname()
   const [isCollapsed, setIsCollapsed] = useState(collapsed)
@@ -223,14 +223,36 @@ export function Sidebar({
     <TooltipProvider>
       <aside
         className={cn(
-          "fixed left-0 top-16 h-[calc(100vh-4rem)] bg-white dark:bg-slate-950 border-r border-slate-200 dark:border-slate-800 flex flex-col transition-all duration-300 z-40",
+          "fixed left-0 top-0 h-screen bg-white dark:bg-slate-950 border-r border-slate-200 dark:border-slate-800 flex flex-col transition-all duration-300 z-40",
           isCollapsed ? "w-16" : "w-64"
         )}
       >
+        {/* Logo & Brand */}
+        <div className={cn(
+          "h-16 flex items-center border-b border-slate-200 dark:border-slate-800",
+          isCollapsed ? "justify-center px-2" : "px-4"
+        )}>
+          <Link href="/" className="flex items-center gap-2">
+            <div className="h-9 w-9 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shrink-0">
+              <Zap className="h-5 w-5 text-white" />
+            </div>
+            {!isCollapsed && (
+              <div className="flex flex-col">
+                <span className="font-bold text-lg text-slate-900 dark:text-white leading-tight">DevRetain</span>
+                {user.plan && (
+                  <Badge className="w-fit mt-0.5 bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400 border-0 text-[10px] px-1.5 py-0">
+                    {user.plan}
+                  </Badge>
+                )}
+              </div>
+            )}
+          </Link>
+        </div>
+
         {/* Collapse Toggle */}
         <button
           onClick={handleCollapse}
-          className="absolute -right-3 top-6 h-6 w-6 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 flex items-center justify-center shadow-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors z-50"
+          className="absolute -right-3 top-20 h-6 w-6 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 flex items-center justify-center shadow-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors z-50"
         >
           {isCollapsed ? (
             <ChevronRight className="h-4 w-4 text-slate-600 dark:text-slate-400" />
@@ -269,6 +291,35 @@ export function Sidebar({
 
         {/* Bottom Navigation */}
         <div className="p-3 border-t border-slate-200 dark:border-slate-800 space-y-1">
+          {/* Notifications */}
+          {isCollapsed ? (
+            <Tooltip delayDuration={0}>
+              <TooltipTrigger asChild>
+                <button className="w-full flex items-center justify-center gap-3 px-2 py-2.5 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors relative">
+                  <Bell className="h-5 w-5" />
+                  {notifications.total && notifications.total > 0 && (
+                    <span className="absolute top-1 right-1 h-4 w-4 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center">
+                      {notifications.total > 9 ? "9+" : notifications.total}
+                    </span>
+                  )}
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                Bildirimler {notifications.total ? `(${notifications.total})` : ""}
+              </TooltipContent>
+            </Tooltip>
+          ) : (
+            <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+              <Bell className="h-5 w-5" />
+              <span className="flex-1 text-left">Bildirimler</span>
+              {notifications.total && notifications.total > 0 && (
+                <Badge className="h-5 min-w-5 px-1.5 flex items-center justify-center bg-red-500 text-white text-xs">
+                  {notifications.total > 9 ? "9+" : notifications.total}
+                </Badge>
+              )}
+            </button>
+          )}
+
           {filteredBottomItems.map((item) => (
             <NavLink key={item.href} item={item} />
           ))}
@@ -295,6 +346,40 @@ export function Sidebar({
             >
               <LogOut className="h-5 w-5" />
               <span>Çıkış Yap</span>
+            </Link>
+          )}
+        </div>
+
+        {/* User Profile */}
+        <div className={cn(
+          "p-3 border-t border-slate-200 dark:border-slate-800",
+          isCollapsed ? "flex justify-center" : ""
+        )}>
+          {isCollapsed ? (
+            <Tooltip delayDuration={0}>
+              <TooltipTrigger asChild>
+                <Link href="/settings" className="block">
+                  <div className="h-9 w-9 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white text-sm font-medium">
+                    {user.name.split(" ").map(n => n[0]).join("").slice(0, 2)}
+                  </div>
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                <div>
+                  <p className="font-medium">{user.name}</p>
+                  <p className="text-xs text-slate-400">{user.email}</p>
+                </div>
+              </TooltipContent>
+            </Tooltip>
+          ) : (
+            <Link href="/settings" className="flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+              <div className="h-9 w-9 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white text-sm font-medium shrink-0">
+                {user.name.split(" ").map(n => n[0]).join("").slice(0, 2)}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-slate-900 dark:text-white truncate">{user.name}</p>
+                <p className="text-xs text-slate-500 truncate">{user.email}</p>
+              </div>
             </Link>
           )}
         </div>
