@@ -62,6 +62,7 @@ import {
 } from "@/components/ui/select"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/hooks/use-locale"
 
 // Mock data for system stats
 const systemStats = {
@@ -436,6 +437,7 @@ const planColors = {
 }
 
 export default function AdminPage() {
+  const { locale } = useLocale()
   const [activeTab, setActiveTab] = useState("overview")
   const [userSearch, setUserSearch] = useState("")
   const [userFilter, setUserFilter] = useState("all")
@@ -443,6 +445,72 @@ export default function AdminPage() {
   const [auditCategoryFilter, setAuditCategoryFilter] = useState("all")
   const [auditSeverityFilter, setAuditSeverityFilter] = useState("all")
   const [auditReviewFilter, setAuditReviewFilter] = useState("all")
+  
+  // Localized texts
+  const t = {
+    adminPanel: locale === 'tr' ? 'Admin Panel' : 'Admin Panel',
+    dashboard: locale === 'tr' ? 'Dashboard' : 'Dashboard',
+    overview: locale === 'tr' ? 'Genel Bakış' : 'Overview',
+    users: locale === 'tr' ? 'Kullanıcılar' : 'Users',
+    sponsors: locale === 'tr' ? 'Sponsorlar' : 'Sponsors',
+    logs: locale === 'tr' ? 'Log Kayıtları' : 'Logs',
+    systemActivities: locale === 'tr' ? 'Sistem Hareketleri' : 'System Activities',
+    totalUsers: locale === 'tr' ? 'Toplam Kullanıcı' : 'Total Users',
+    totalOrgs: locale === 'tr' ? 'Toplam Organizasyon' : 'Total Organizations',
+    monthlyRevenue: locale === 'tr' ? 'Aylık Gelir (MRR)' : 'Monthly Revenue (MRR)',
+    annualRevenue: locale === 'tr' ? 'Yıllık Gelir (ARR)' : 'Annual Revenue (ARR)',
+    subscriptionDist: locale === 'tr' ? 'Abonelik Dağılımı' : 'Subscription Distribution',
+    free: locale === 'tr' ? 'Ücretsiz' : 'Free',
+    pro: locale === 'tr' ? 'Pro' : 'Pro',
+    enterprise: locale === 'tr' ? 'Kurumsal' : 'Enterprise',
+    churnRate: locale === 'tr' ? 'Churn Oranı' : 'Churn Rate',
+    arpu: locale === 'tr' ? 'ARPU' : 'ARPU',
+    searchUsers: locale === 'tr' ? 'Kullanıcı ara...' : 'Search users...',
+    filterBy: locale === 'tr' ? 'Filtrele' : 'Filter by',
+    all: locale === 'tr' ? 'Tümü' : 'All',
+    active: locale === 'tr' ? 'Aktif' : 'Active',
+    suspended: locale === 'tr' ? 'Askıya Alınmış' : 'Suspended',
+    name: locale === 'tr' ? 'İsim' : 'Name',
+    organization: locale === 'tr' ? 'Organizasyon' : 'Organization',
+    plan: locale === 'tr' ? 'Plan' : 'Plan',
+    status: locale === 'tr' ? 'Durum' : 'Status',
+    role: locale === 'tr' ? 'Rol' : 'Role',
+    lastLogin: locale === 'tr' ? 'Son Giriş' : 'Last Login',
+    actions: locale === 'tr' ? 'İşlemler' : 'Actions',
+    viewDetails: locale === 'tr' ? 'Detayları Gör' : 'View Details',
+    suspend: locale === 'tr' ? 'Askıya Al' : 'Suspend',
+    activate: locale === 'tr' ? 'Aktifleştir' : 'Activate',
+    changeRole: locale === 'tr' ? 'Rol Değiştir' : 'Change Role',
+    owner: locale === 'tr' ? 'Sahip' : 'Owner',
+    admin: locale === 'tr' ? 'Yönetici' : 'Admin',
+    member: locale === 'tr' ? 'Üye' : 'Member',
+    topSponsors: locale === 'tr' ? 'En Çok İş Yapılan Sponsorlar' : 'Top Sponsors',
+    totalValue: locale === 'tr' ? 'Toplam Değer' : 'Total Value',
+    campaigns: locale === 'tr' ? 'Kampanya' : 'Campaigns',
+    avgROI: locale === 'tr' ? 'Ort. ROI' : 'Avg. ROI',
+    activityLogs: locale === 'tr' ? 'Sistem Logları' : 'Activity Logs',
+    filterBySeverity: locale === 'tr' ? 'Önem Derecesi' : 'Severity',
+    info: locale === 'tr' ? 'Bilgi' : 'Info',
+    warning: locale === 'tr' ? 'Uyarı' : 'Warning',
+    error: locale === 'tr' ? 'Hata' : 'Error',
+    critical: locale === 'tr' ? 'Kritik' : 'Critical',
+    auditLogs: locale === 'tr' ? 'Denetim Logları' : 'Audit Logs',
+    category: locale === 'tr' ? 'Kategori' : 'Category',
+    reviewStatus: locale === 'tr' ? 'İnceleme Durumu' : 'Review Status',
+    pending: locale === 'tr' ? 'Beklemede' : 'Pending',
+    reviewed: locale === 'tr' ? 'İncelendi' : 'Reviewed',
+    actor: locale === 'tr' ? 'Yapan' : 'Actor',
+    action: locale === 'tr' ? 'İşlem' : 'Action',
+    entity: locale === 'tr' ? 'Varlık' : 'Entity',
+    timestamp: locale === 'tr' ? 'Zaman' : 'Timestamp',
+    details: locale === 'tr' ? 'Detaylar' : 'Details',
+    markReviewed: locale === 'tr' ? 'İncelendi Olarak İşaretle' : 'Mark as Reviewed',
+    viewChanges: locale === 'tr' ? 'Değişiklikleri Gör' : 'View Changes',
+    before: locale === 'tr' ? 'Önce' : 'Before',
+    after: locale === 'tr' ? 'Sonra' : 'After',
+    financialImpact: locale === 'tr' ? 'Finansal Etki' : 'Financial Impact',
+    noLogs: locale === 'tr' ? 'Log kaydı bulunamadı' : 'No logs found',
+  }
 
   const filteredUsers = mockUsers.filter(user => {
     const matchesSearch = user.name.toLowerCase().includes(userSearch.toLowerCase()) ||

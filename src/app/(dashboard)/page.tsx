@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
+import { useTranslations } from "next-intl"
 import {
   DollarSign,
   TrendingUp,
@@ -41,16 +42,13 @@ import {
   type SponsorsByTier,
   type RFMDistribution,
 } from "@/lib/mock-analytics"
-
-// Tooltip açıklamaları
-const metricTooltips = {
-  revenue: "Toplam Gelir = Tüm kampanyalardan elde edilen brüt gelir toplamı. Sponsorluk ödemeleri, reklam gelirleri ve komisyonları içerir.",
-  roi: "ROI (Yatırım Getirisi) = ((Gelir - Maliyet) / Maliyet) × 100. Pozitif değer kar, negatif değer zarar anlamına gelir.",
-  roo: "ROO (Hedef Getirisi) = Σ((Gerçekleşen / Hedef) × Ağırlık). Stratejik hedeflerin ne kadarına ulaşıldığını gösterir (0-100 arası).",
-  campaigns: "Aktif kampanya sayısı. Durumu 'Aktif' olan ve bitiş tarihi geçmemiş kampanyaları kapsar.",
-}
+import { useLocale } from "@/hooks/use-locale"
 
 export default function DashboardPage() {
+  const t = useTranslations("dashboard")
+  const tCommon = useTranslations("common")
+  const { locale, format } = useLocale()
+  
   const [isLoading, setIsLoading] = useState(true)
   const [activeTab, setActiveTab] = useState("roi")
   const [dateRange, setDateRange] = useState("30d")
@@ -67,11 +65,27 @@ export default function DashboardPage() {
   const [campaignsWithROO, setCampaignsWithROO] = useState<ReturnType<typeof getCampaignsWithROODetails>>([])
   const [rooStats, setRooStats] = useState<ReturnType<typeof getROOSummaryStats> | null>(null)
 
-  // Dikkat gerektiren kampanyalar (mock data)
+  // Localized tooltip explanations
+  const metricTooltips = {
+    revenue: locale === 'tr' 
+      ? "Toplam Gelir = Tüm kampanyalardan elde edilen brüt gelir toplamı. Sponsorluk ödemeleri, reklam gelirleri ve komisyonları içerir."
+      : "Total Revenue = Sum of gross revenue from all campaigns. Includes sponsorship payments, ad revenue and commissions.",
+    roi: locale === 'tr'
+      ? "ROI (Yatırım Getirisi) = ((Gelir - Maliyet) / Maliyet) × 100. Pozitif değer kar, negatif değer zarar anlamına gelir."
+      : "ROI (Return on Investment) = ((Revenue - Cost) / Cost) × 100. Positive value means profit, negative means loss.",
+    roo: locale === 'tr'
+      ? "ROO (Hedef Getirisi) = Σ((Gerçekleşen / Hedef) × Ağırlık). Stratejik hedeflerin ne kadarına ulaşıldığını gösterir (0-100 arası)."
+      : "ROO (Return on Objectives) = Σ((Actual / Target) × Weight). Shows how much of strategic goals were achieved (0-100).",
+    campaigns: locale === 'tr'
+      ? "Aktif kampanya sayısı. Durumu 'Aktif' olan ve bitiş tarihi geçmemiş kampanyaları kapsar."
+      : "Number of active campaigns. Includes campaigns with 'Active' status and not past their end date.",
+  }
+
+  // Localized attention items
   const attentionItems = [
     {
       id: "1",
-      name: "Yaz Festivali 2024",
+      name: locale === 'tr' ? "Yaz Festivali 2024" : "Summer Festival 2024",
       type: "low_roi" as const,
       severity: "high" as const,
       metric: "ROI",
@@ -79,14 +93,14 @@ export default function DashboardPage() {
     },
     {
       id: "2",
-      name: "Teknoloji Zirvesi",
+      name: locale === 'tr' ? "Teknoloji Zirvesi" : "Tech Summit",
       type: "ending_soon" as const,
       severity: "medium" as const,
       daysRemaining: 5,
     },
     {
       id: "3",
-      name: "Spor Sponsorluğu Q4",
+      name: locale === 'tr' ? "Spor Sponsorluğu Q4" : "Sports Sponsorship Q4",
       type: "behind_target" as const,
       severity: "medium" as const,
       metric: "ROO",
@@ -94,11 +108,11 @@ export default function DashboardPage() {
     },
     {
       id: "4",
-      name: "Podcast Serisi",
+      name: locale === 'tr' ? "Podcast Serisi" : "Podcast Series",
       type: "no_activity" as const,
       severity: "low" as const,
-      metric: "Son aktivite",
-      metricValue: "15 gün önce",
+      metric: locale === 'tr' ? "Son aktivite" : "Last activity",
+      metricValue: locale === 'tr' ? "15 gün önce" : "15 days ago",
     },
   ]
 
@@ -117,13 +131,14 @@ export default function DashboardPage() {
   }, [])
 
   const formatCurrency = (value: number) => {
+    const symbol = locale === 'tr' ? '₺' : '$'
     if (value >= 1000000) {
-      return `₺${(value / 1000000).toFixed(1)}M`
+      return `${symbol}${(value / 1000000).toFixed(1)}M`
     }
     if (value >= 1000) {
-      return `₺${(value / 1000).toFixed(0)}K`
+      return `${symbol}${(value / 1000).toFixed(0)}K`
     }
-    return `₺${value}`
+    return `${symbol}${value}`
   }
 
   // Loading state
@@ -132,7 +147,9 @@ export default function DashboardPage() {
       <div className="flex items-center justify-center h-[calc(100vh-4rem)]">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="h-8 w-8 animate-spin text-violet-600" />
-          <p className="text-slate-500">Dashboard yükleniyor...</p>
+          <p className="text-slate-500">
+            {locale === 'tr' ? 'Dashboard yükleniyor...' : 'Loading dashboard...'}
+          </p>
         </div>
       </div>
     )
@@ -145,7 +162,9 @@ export default function DashboardPage() {
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Dashboard</h1>
-            <p className="text-sm text-slate-500">Sponsorluk performansınızı takip edin</p>
+            <p className="text-sm text-slate-500">
+              {locale === 'tr' ? 'Sponsorluk performansınızı takip edin' : 'Track your sponsorship performance'}
+            </p>
           </div>
           <div className="flex items-center gap-3">
             <DashboardFilters
@@ -156,13 +175,13 @@ export default function DashboardPage() {
               <Link href="/reports">
                 <Button variant="outline" size="sm" className="h-9 gap-2">
                   <FileText className="h-4 w-4" />
-                  Rapor
+                  {locale === 'tr' ? 'Rapor' : 'Report'}
                 </Button>
               </Link>
               <Link href="/campaigns/new">
                 <Button size="sm" className="h-9 gap-2 bg-violet-600 hover:bg-violet-700">
                   <Plus className="h-4 w-4" />
-                  Kampanya
+                  {locale === 'tr' ? 'Kampanya' : 'Campaign'}
                 </Button>
               </Link>
             </div>
@@ -178,7 +197,7 @@ export default function DashboardPage() {
           <section>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               <MetricCard
-                title="Toplam Gelir"
+                title={locale === 'tr' ? "Toplam Gelir" : "Total Revenue"}
                 value={formatCurrency(stats.totalRevenue)}
                 previousValue={formatCurrency(stats.totalRevenue * 0.88)}
                 changePercent={12.5}
@@ -187,16 +206,16 @@ export default function DashboardPage() {
                 accentColor="emerald"
               />
               <MetricCard
-                title="Net ROI"
-                value={`%${stats.averageROI.toFixed(0)}`}
-                previousValue={`%${(stats.averageROI - 8.2).toFixed(0)}`}
+                title={locale === 'tr' ? "Net ROI" : "Net ROI"}
+                value={`${locale === 'tr' ? '%' : ''}${stats.averageROI.toFixed(0)}${locale === 'en' ? '%' : ''}`}
+                previousValue={`${locale === 'tr' ? '%' : ''}${(stats.averageROI - 8.2).toFixed(0)}${locale === 'en' ? '%' : ''}`}
                 changePercent={8.2}
                 icon={TrendingUp}
                 tooltip={metricTooltips.roi}
                 accentColor="blue"
               />
               <MetricCard
-                title="Genel ROO Skoru"
+                title={locale === 'tr' ? "Genel ROO Skoru" : "Overall ROO Score"}
                 value={rooStats?.avgRooScore || 0}
                 previousValue="68"
                 changePercent={rooStats ? ((rooStats.avgRooScore - 68) / 68) * 100 : 0}
@@ -205,7 +224,7 @@ export default function DashboardPage() {
                 accentColor="violet"
               />
               <MetricCard
-                title="Aktif Kampanyalar"
+                title={locale === 'tr' ? "Aktif Kampanyalar" : "Active Campaigns"}
                 value={stats.activeCampaigns}
                 previousValue={String(stats.activeCampaigns - 2)}
                 changePercent={((stats.activeCampaigns - (stats.activeCampaigns - 2)) / (stats.activeCampaigns - 2)) * 100}
@@ -227,7 +246,7 @@ export default function DashboardPage() {
                   className="flex-1 gap-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 dark:data-[state=active]:bg-blue-900/30 dark:data-[state=active]:text-blue-400"
                 >
                   <TrendingUp className="h-4 w-4" />
-                  <span className="hidden sm:inline">Finansal Performans</span>
+                  <span className="hidden sm:inline">{locale === 'tr' ? 'Finansal Performans' : 'Financial Performance'}</span>
                   <span className="sm:hidden">ROI</span>
                 </TabsTrigger>
                 <TabsTrigger 
@@ -235,7 +254,7 @@ export default function DashboardPage() {
                   className="flex-1 gap-2 data-[state=active]:bg-violet-50 data-[state=active]:text-violet-600 dark:data-[state=active]:bg-violet-900/30 dark:data-[state=active]:text-violet-400"
                 >
                   <Target className="h-4 w-4" />
-                  <span className="hidden sm:inline">Stratejik Hedefler</span>
+                  <span className="hidden sm:inline">{locale === 'tr' ? 'Stratejik Hedefler' : 'Strategic Goals'}</span>
                   <span className="sm:hidden">ROO</span>
                 </TabsTrigger>
               </TabsList>
@@ -249,7 +268,9 @@ export default function DashboardPage() {
                       <CardHeader className="pb-2">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <CardTitle className="text-base font-semibold">Gelir vs Harcama Trendi</CardTitle>
+                            <CardTitle className="text-base font-semibold">
+                              {locale === 'tr' ? 'Gelir vs Harcama Trendi' : 'Revenue vs Expense Trend'}
+                            </CardTitle>
                             <Tooltip>
                               <TooltipTrigger asChild>
                                 <button className="p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800">
@@ -257,7 +278,11 @@ export default function DashboardPage() {
                                 </button>
                               </TooltipTrigger>
                               <TooltipContent>
-                                <p className="max-w-xs">Aylık gelir ve harcama karşılaştırması. Mavi çizgi geliri, kırmızı çizgi harcamayı gösterir.</p>
+                                <p className="max-w-xs">
+                                  {locale === 'tr' 
+                                    ? 'Aylık gelir ve harcama karşılaştırması. Mavi çizgi geliri, kırmızı çizgi harcamayı gösterir.'
+                                    : 'Monthly revenue and expense comparison. Blue line shows revenue, red line shows expenses.'}
+                                </p>
                               </TooltipContent>
                             </Tooltip>
                           </div>
@@ -271,7 +296,9 @@ export default function DashboardPage() {
                   <Card className="border-0 shadow-sm">
                     <CardHeader className="pb-2">
                       <div className="flex items-center gap-2">
-                        <CardTitle className="text-base font-semibold">Sponsor Dağılımı</CardTitle>
+                        <CardTitle className="text-base font-semibold">
+                          {locale === 'tr' ? 'Sponsor Dağılımı' : 'Sponsor Distribution'}
+                        </CardTitle>
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <button className="p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800">
@@ -279,7 +306,11 @@ export default function DashboardPage() {
                             </button>
                           </TooltipTrigger>
                           <TooltipContent>
-                            <p className="max-w-xs">Sponsorların tier seviyelerine göre dağılımı (Bronze, Silver, Gold, Platinum, Diamond).</p>
+                            <p className="max-w-xs">
+                              {locale === 'tr' 
+                                ? 'Sponsorların tier seviyelerine göre dağılımı (Bronze, Silver, Gold, Platinum, Diamond).'
+                                : 'Distribution of sponsors by tier level (Bronze, Silver, Gold, Platinum, Diamond).'}
+                            </p>
                           </TooltipContent>
                         </Tooltip>
                       </div>
@@ -295,7 +326,9 @@ export default function DashboardPage() {
                   <Card className="border-0 shadow-sm">
                     <CardHeader className="pb-2">
                       <div className="flex items-center gap-2">
-                        <CardTitle className="text-base font-semibold">RFM Segmentasyonu</CardTitle>
+                        <CardTitle className="text-base font-semibold">
+                          {locale === 'tr' ? 'RFM Segmentasyonu' : 'RFM Segmentation'}
+                        </CardTitle>
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <button className="p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800">
@@ -303,7 +336,11 @@ export default function DashboardPage() {
                             </button>
                           </TooltipTrigger>
                           <TooltipContent>
-                            <p className="max-w-xs">RFM = Recency (Son İşlem), Frequency (Sıklık), Monetary (Tutar). Sponsorları değerlerine göre segmentler.</p>
+                            <p className="max-w-xs">
+                              {locale === 'tr' 
+                                ? 'RFM = Recency (Son İşlem), Frequency (Sıklık), Monetary (Tutar). Sponsorları değerlerine göre segmentler.'
+                                : 'RFM = Recency (Last Transaction), Frequency (Count), Monetary (Amount). Segments sponsors by their value.'}
+                            </p>
                           </TooltipContent>
                         </Tooltip>
                       </div>
@@ -316,7 +353,9 @@ export default function DashboardPage() {
                     <Card className="border-0 shadow-sm h-full">
                       <CardHeader className="pb-2">
                         <div className="flex items-center gap-2">
-                          <CardTitle className="text-base font-semibold">En Değerli Sponsorlar</CardTitle>
+                          <CardTitle className="text-base font-semibold">
+                            {locale === 'tr' ? 'En Değerli Sponsorlar' : 'Top Sponsors'}
+                          </CardTitle>
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <button className="p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800">
@@ -324,7 +363,11 @@ export default function DashboardPage() {
                               </button>
                             </TooltipTrigger>
                             <TooltipContent>
-                              <p className="max-w-xs">Toplam katkı miktarına göre sıralanmış en değerli 5 sponsor.</p>
+                              <p className="max-w-xs">
+                                {locale === 'tr' 
+                                  ? 'Toplam katkı miktarına göre sıralanmış en değerli 5 sponsor.'
+                                  : 'Top 5 sponsors ranked by total contribution amount.'}
+                              </p>
                             </TooltipContent>
                           </Tooltip>
                         </div>
@@ -346,7 +389,9 @@ export default function DashboardPage() {
                       <CardHeader className="pb-2">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <CardTitle className="text-base font-semibold">ROI vs ROO Performans Matrisi</CardTitle>
+                            <CardTitle className="text-base font-semibold">
+                              {locale === 'tr' ? 'ROI vs ROO Performans Matrisi' : 'ROI vs ROO Performance Matrix'}
+                            </CardTitle>
                             <Tooltip>
                               <TooltipTrigger asChild>
                                 <button className="p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800">
@@ -354,7 +399,11 @@ export default function DashboardPage() {
                                 </button>
                               </TooltipTrigger>
                               <TooltipContent>
-                                <p className="max-w-xs">X ekseni ROI (finansal getiri), Y ekseni ROO (hedef başarısı). Sağ üst kadran en iyi performansı gösterir.</p>
+                                <p className="max-w-xs">
+                                  {locale === 'tr' 
+                                    ? 'X ekseni ROI (finansal getiri), Y ekseni ROO (hedef başarısı). Sağ üst kadran en iyi performansı gösterir.'
+                                    : 'X-axis shows ROI (financial return), Y-axis shows ROO (goal achievement). Top-right quadrant indicates best performance.'}
+                                </p>
                               </TooltipContent>
                             </Tooltip>
                           </div>
@@ -375,8 +424,12 @@ export default function DashboardPage() {
                             <Target className="h-5 w-5 text-white" />
                           </div>
                           <div>
-                            <CardTitle className="text-base font-semibold">ROO Özeti</CardTitle>
-                            <p className="text-xs text-slate-500">Stratejik hedef performansı</p>
+                            <CardTitle className="text-base font-semibold">
+                              {locale === 'tr' ? 'ROO Özeti' : 'ROO Summary'}
+                            </CardTitle>
+                            <p className="text-xs text-slate-500">
+                              {locale === 'tr' ? 'Stratejik hedef performansı' : 'Strategic goal performance'}
+                            </p>
                           </div>
                         </div>
                       </CardHeader>
@@ -384,7 +437,9 @@ export default function DashboardPage() {
                         {/* Ortalama ROO Score */}
                         <div className="p-4 rounded-xl bg-gradient-to-br from-violet-500/10 to-purple-500/10 border border-violet-500/20">
                           <p className="text-3xl font-bold text-violet-600 dark:text-violet-400">{rooStats.avgRooScore}</p>
-                          <p className="text-sm text-slate-500">Ortalama ROO Skoru</p>
+                          <p className="text-sm text-slate-500">
+                            {locale === 'tr' ? 'Ortalama ROO Skoru' : 'Average ROO Score'}
+                          </p>
                         </div>
                         
                         {/* Hedef İstatistikleri */}
@@ -393,35 +448,49 @@ export default function DashboardPage() {
                             <p className="text-xl font-bold text-emerald-600 dark:text-emerald-400">
                               {rooStats.completedObjectives + rooStats.exceededObjectives}
                             </p>
-                            <p className="text-xs text-slate-500">Tamamlanan</p>
+                            <p className="text-xs text-slate-500">
+                              {locale === 'tr' ? 'Tamamlanan' : 'Completed'}
+                            </p>
                           </div>
                           <div className="p-3 rounded-lg bg-orange-50 dark:bg-orange-900/20 text-center">
                             <p className="text-xl font-bold text-orange-600 dark:text-orange-400">
                               {rooStats.atRiskObjectives + rooStats.behindObjectives}
                             </p>
-                            <p className="text-xs text-slate-500">Risk Altında</p>
+                            <p className="text-xs text-slate-500">
+                              {locale === 'tr' ? 'Risk Altında' : 'At Risk'}
+                            </p>
                           </div>
                         </div>
                         
                         {/* Quadrant Dağılımı */}
                         <div className="pt-3 border-t border-slate-200 dark:border-slate-700">
-                          <p className="text-xs font-medium text-slate-500 mb-2">Kampanya Dağılımı</p>
+                          <p className="text-xs font-medium text-slate-500 mb-2">
+                            {locale === 'tr' ? 'Kampanya Dağılımı' : 'Campaign Distribution'}
+                          </p>
                           <div className="grid grid-cols-2 gap-2 text-xs">
                             <div className="flex items-center gap-2">
                               <div className="h-2 w-2 rounded-full bg-emerald-500" />
-                              <span className="text-slate-600 dark:text-slate-400">Yıldız: {rooStats.quadrantDistribution.star}</span>
+                              <span className="text-slate-600 dark:text-slate-400">
+                                {locale === 'tr' ? 'Yıldız' : 'Star'}: {rooStats.quadrantDistribution.star}
+                              </span>
                             </div>
                             <div className="flex items-center gap-2">
                               <div className="h-2 w-2 rounded-full bg-amber-500" />
-                              <span className="text-slate-600 dark:text-slate-400">Para: {rooStats.quadrantDistribution.moneyOnly}</span>
+                              <span className="text-slate-600 dark:text-slate-400">
+                                {locale === 'tr' ? 'Para' : 'Money'}: {rooStats.quadrantDistribution.moneyOnly}
+                              </span>
                             </div>
                             <div className="flex items-center gap-2">
                               <div className="h-2 w-2 rounded-full bg-blue-500" />
-                              <span className="text-slate-600 dark:text-slate-400">Strateji: {rooStats.quadrantDistribution.strategic}</span>
+                              <span className="text-slate-600 dark:text-slate-400">
+                                {locale === 'tr' ? 'Strateji' : 'Strategic'}: {rooStats.quadrantDistribution.strategic}
+                              </span>
                             </div>
                             <div className="flex items-center gap-2">
                               <div className="h-2 w-2 rounded-full bg-red-500" />
-                              <span className="text-slate-600 dark:text-slate-400">İyileştir: {rooStats.quadrantDistribution.needsWork}</span>
+                              <span className="text-slate-600 dark:text-slate-400">
+                                {locale === 'tr' ? 'İyileştir' : 'Improve'}: {rooStats.quadrantDistribution.needsWork}
+                              </span>
                             </div>
                           </div>
                         </div>
@@ -435,7 +504,9 @@ export default function DashboardPage() {
                   <Card className="border-0 shadow-sm">
                     <CardHeader className="pb-2">
                       <div className="flex items-center gap-2">
-                        <CardTitle className="text-base font-semibold">Hedef İlerleme Durumu</CardTitle>
+                        <CardTitle className="text-base font-semibold">
+                          {locale === 'tr' ? 'Hedef İlerleme Durumu' : 'Objective Progress'}
+                        </CardTitle>
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <button className="p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800">
@@ -443,7 +514,11 @@ export default function DashboardPage() {
                             </button>
                           </TooltipTrigger>
                           <TooltipContent>
-                            <p className="max-w-xs">Her kampanyanın stratejik hedeflerine ne kadar yaklaştığını gösteren ilerleme çubukları.</p>
+                            <p className="max-w-xs">
+                              {locale === 'tr' 
+                                ? 'Her kampanyanın stratejik hedeflerine ne kadar yaklaştığını gösteren ilerleme çubukları.'
+                                : 'Progress bars showing how close each campaign is to its strategic goals.'}
+                            </p>
                           </TooltipContent>
                         </Tooltip>
                       </div>
@@ -467,7 +542,9 @@ export default function DashboardPage() {
                 <CardHeader className="pb-2">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <CardTitle className="text-base font-semibold">Son Kampanyalar</CardTitle>
+                      <CardTitle className="text-base font-semibold">
+                        {locale === 'tr' ? 'Son Kampanyalar' : 'Recent Campaigns'}
+                      </CardTitle>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <button className="p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800">
@@ -475,12 +552,16 @@ export default function DashboardPage() {
                           </button>
                         </TooltipTrigger>
                         <TooltipContent>
-                          <p className="max-w-xs">Son oluşturulan ve güncellenen kampanyaların listesi.</p>
+                          <p className="max-w-xs">
+                            {locale === 'tr' 
+                              ? 'Son oluşturulan ve güncellenen kampanyaların listesi.'
+                              : 'List of recently created and updated campaigns.'}
+                          </p>
                         </TooltipContent>
                       </Tooltip>
                     </div>
                     <Button variant="ghost" size="sm" className="text-xs">
-                      Tümünü Gör
+                      {locale === 'tr' ? 'Tümünü Gör' : 'View All'}
                     </Button>
                   </div>
                 </CardHeader>
@@ -493,7 +574,7 @@ export default function DashboardPage() {
 
           {/* Footer */}
           <footer className="pt-8 border-t border-slate-200 dark:border-slate-800 text-center text-sm text-slate-500">
-            <p>DevRetain CRM © 2024 • Sponsorluk Yönetim Sistemi</p>
+            <p>DevRetain CRM © 2024 • {locale === 'tr' ? 'Sponsorluk Yönetim Sistemi' : 'Sponsorship Management System'}</p>
             <p className="mt-1 text-xs text-slate-400">
               Demo verileri gösterilmektedir.
             </p>

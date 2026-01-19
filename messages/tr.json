@@ -1,0 +1,563 @@
+{
+  "common": {
+    "appName": "DevRetain",
+    "tagline": "Sponsorluk Yönetiminde Veri Devri",
+    "loading": "Yükleniyor...",
+    "save": "Kaydet",
+    "cancel": "İptal",
+    "delete": "Sil",
+    "edit": "Düzenle",
+    "view": "Görüntüle",
+    "search": "Ara",
+    "filter": "Filtrele",
+    "sort": "Sırala",
+    "export": "Dışa Aktar",
+    "import": "İçe Aktar",
+    "back": "Geri",
+    "next": "İleri",
+    "submit": "Gönder",
+    "confirm": "Onayla",
+    "close": "Kapat",
+    "yes": "Evet",
+    "no": "Hayır",
+    "all": "Tümü",
+    "none": "Hiçbiri",
+    "select": "Seç",
+    "required": "Zorunlu",
+    "optional": "İsteğe Bağlı",
+    "new": "Yeni",
+    "active": "Aktif",
+    "inactive": "Pasif",
+    "pending": "Beklemede",
+    "completed": "Tamamlandı",
+    "error": "Hata",
+    "success": "Başarılı",
+    "warning": "Uyarı",
+    "info": "Bilgi"
+  },
+  "languageSelector": {
+    "title": "Dil Seçin",
+    "subtitle": "Tercih ettiğiniz dili seçin",
+    "continue": "Devam Et",
+    "turkish": "Türkçe",
+    "english": "English"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "campaigns": "Kampanyalar",
+    "sponsors": "Sponsorlar",
+    "reports": "Raporlar",
+    "settings": "Ayarlar",
+    "mediaKit": "Media Kit",
+    "discover": "Keşfet",
+    "matches": "Eşleşmeler",
+    "marketplace": "Pazaryeri",
+    "admin": "Admin",
+    "portfolio": "Portföyüm",
+    "notifications": "Bildirimler",
+    "signOut": "Çıkış Yap",
+    "profile": "Profil"
+  },
+  "landing": {
+    "hero": {
+      "title": "Sponsorluk Yönetiminde Veri Devri",
+      "subtitle": "ROI ve ROO analizleri ile sponsorluk süreçlerinizi optimize edin. Veriye dayalı kararlar alın, getirinizi maksimize edin.",
+      "cta": {
+        "start": "Ücretsiz Başla",
+        "demo": "Demoyu İzle"
+      }
+    },
+    "socialProof": {
+      "title": "Güvenle Kullanan Topluluklar"
+    },
+    "features": {
+      "title": "Neden DevRetain?",
+      "subtitle": "Sponsorluk yönetiminin geleceğini keşfedin",
+      "roi": {
+        "title": "ROI Takibi",
+        "description": "Gerçek zamanlı yatırım getirisi analizi ile her kampanyanın finansal performansını izleyin."
+      },
+      "roo": {
+        "title": "ROO Yönetimi",
+        "description": "Stratejik hedeflerinizi ölçün. Marka bilinirliği, etkileşim ve dönüşüm hedeflerinizi takip edin."
+      },
+      "crm": {
+        "title": "Sponsor CRM",
+        "description": "Tüm sponsor ilişkilerinizi tek platformda yönetin. RFM analizi ile değerli sponsorlarınızı belirleyin."
+      },
+      "reports": {
+        "title": "Otomatik Raporlama",
+        "description": "Profesyonel PDF raporları ile sponsorlarınızı etkileyici verilerle bilgilendirin."
+      }
+    },
+    "howItWorks": {
+      "title": "Nasıl Çalışır?",
+      "step1": {
+        "title": "Hesap Aç",
+        "description": "Ücretsiz hesabınızı oluşturun ve platformu keşfedin."
+      },
+      "step2": {
+        "title": "Sponsorlarını Bağla",
+        "description": "Mevcut sponsorlarınızı ekleyin veya yeni sponsorlar keşfedin."
+      },
+      "step3": {
+        "title": "Analiz Et",
+        "description": "Verilerinizi analiz edin ve akıllı kararlar alın."
+      }
+    },
+    "pricing": {
+      "title": "Planlar",
+      "subtitle": "İhtiyacınıza uygun planı seçin",
+      "free": "Ücretsiz",
+      "pro": "Profesyonel",
+      "enterprise": "Kurumsal",
+      "perMonth": "/ay",
+      "perYear": "/yıl",
+      "annual": "Yıllık",
+      "monthly": "Aylık",
+      "discount": "%20 indirim"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Hoş Geldiniz",
+    "overview": "Genel Bakış",
+    "metrics": {
+      "totalRevenue": "Toplam Gelir",
+      "netROI": "Net ROI",
+      "overallROO": "Genel ROO Skoru",
+      "activeCampaigns": "Aktif Kampanyalar",
+      "vsLastMonth": "geçen aya göre"
+    },
+    "tabs": {
+      "financial": "Finansal Performans (ROI)",
+      "strategic": "Stratejik Hedefler (ROO)"
+    },
+    "charts": {
+      "revenueVsExpense": "Gelir vs Gider Trendi",
+      "roiTrend": "ROI Trendi",
+      "sponsorDistribution": "Sponsor Dağılımı",
+      "rooProgress": "ROO İlerleme",
+      "campaignPerformance": "Kampanya Performans Matrisi"
+    },
+    "tables": {
+      "recentNegotiations": "Son Sponsorluk Görüşmeleri",
+      "attentionRequired": "Dikkat Gerektiren Kampanyalar"
+    },
+    "filters": {
+      "dateRange": "Tarih Aralığı",
+      "sponsorType": "Sponsor Tipi",
+      "lastWeek": "Son 7 Gün",
+      "lastMonth": "Son 30 Gün",
+      "lastQuarter": "Son 3 Ay",
+      "lastYear": "Son 1 Yıl",
+      "custom": "Özel"
+    }
+  },
+  "campaigns": {
+    "title": "Kampanyalar",
+    "new": "Yeni Kampanya",
+    "edit": "Kampanya Düzenle",
+    "form": {
+      "name": "Kampanya Adı",
+      "sponsor": "Sponsor Seçimi",
+      "budget": "Toplam Bütçe",
+      "targetROI": "Hedeflenen ROI (%)",
+      "startDate": "Başlangıç Tarihi",
+      "endDate": "Bitiş Tarihi",
+      "description": "Açıklama",
+      "objectives": "Hedefler"
+    },
+    "status": {
+      "draft": "Taslak",
+      "pending": "Onay Bekliyor",
+      "active": "Aktif",
+      "paused": "Duraklatıldı",
+      "completed": "Tamamlandı",
+      "cancelled": "İptal Edildi"
+    },
+    "metrics": {
+      "impressions": "Gösterim",
+      "clicks": "Tıklama",
+      "conversions": "Dönüşüm",
+      "ctr": "CTR",
+      "cpc": "CPC",
+      "cpa": "CPA"
+    }
+  },
+  "sponsors": {
+    "title": "Sponsorlar",
+    "new": "Yeni Sponsor",
+    "tier": {
+      "bronze": "Bronz",
+      "silver": "Gümüş",
+      "gold": "Altın",
+      "platinum": "Platin",
+      "diamond": "Elmas"
+    },
+    "rfm": {
+      "title": "RFM Analizi",
+      "recency": "Güncellik",
+      "frequency": "Sıklık",
+      "monetary": "Hacim",
+      "score": "RFM Skoru",
+      "segment": "Segment"
+    },
+    "segments": {
+      "champions": "Şampiyonlar",
+      "loyalCustomers": "Sadık Müşteriler",
+      "potentialLoyalists": "Potansiyel Sadıklar",
+      "recentCustomers": "Yeni Müşteriler",
+      "promising": "Umut Vaat Edenler",
+      "needsAttention": "İlgi Gerektirenler",
+      "aboutToSleep": "Uyumak Üzere",
+      "atRisk": "Risk Altında",
+      "cantLoseThem": "Kaybetmemeli",
+      "hibernating": "Kış Uykusunda",
+      "lost": "Kayıp"
+    }
+  },
+  "reports": {
+    "title": "Raporlar",
+    "generate": "Rapor Oluştur",
+    "export": "PDF İndir",
+    "dateRange": "Tarih Aralığı",
+    "generatedAt": "Oluşturulma Tarihi",
+    "reportPeriod": "Rapor Dönemi",
+    "sections": {
+      "summary": "Özet",
+      "performance": "Performans",
+      "rfmAnalysis": "RFM Analizi",
+      "ltvPrediction": "LTV Tahminleri",
+      "rooResults": "ROO Sonuçları",
+      "executiveSummary": "Yönetici Özeti",
+      "qualitativeGains": "Niteliksel Kazanımlar",
+      "financialPerformance": "Finansal Performans",
+      "strategicGoals": "Stratejik Hedef Performansı (ROO)",
+      "campaignDistribution": "Kampanya Performans Dağılımı",
+      "highlights": "Öne Çıkan Niteliksel Kazanımlar",
+      "conclusion": "Sonuç ve Öneriler"
+    },
+    "pdf": {
+      "title": "Sponsorluk Performans Raporu",
+      "subtitle": "Detaylı Analiz ve Öneriler",
+      "confidential": "GİZLİ - Sadece Yetkili Kişiler İçin",
+      "page": "Sayfa",
+      "of": "/",
+      "generatedBy": "DevRetain CRM tarafından oluşturuldu"
+    },
+    "metrics": {
+      "totalRevenue": "Toplam Gelir",
+      "totalExpenses": "Toplam Gider",
+      "netProfit": "Net Kar",
+      "profitMargin": "Kar Marjı",
+      "avgROI": "Ortalama ROI",
+      "avgROO": "Ortalama ROO",
+      "activeCampaigns": "Aktif Kampanyalar",
+      "completedCampaigns": "Tamamlanan Kampanyalar",
+      "totalSponsors": "Toplam Sponsor",
+      "activeSponsors": "Aktif Sponsorlar",
+      "retentionRate": "Sponsor Tutma Oranı"
+    },
+    "objectives": {
+      "total": "Toplam Hedef",
+      "completed": "Tamamlanan",
+      "exceeded": "Aşılan",
+      "onTrack": "Yolunda",
+      "atRisk": "Risk Altında",
+      "behind": "Geride"
+    },
+    "performance": {
+      "excellent": "Mükemmel",
+      "good": "İyi",
+      "average": "Ortalama",
+      "low": "Düşük",
+      "critical": "Kritik"
+    },
+    "qualitative": {
+      "exceeded": "{type} Hedefi Aşıldı!",
+      "exceededDesc": "{name} hedefinin %{rate}'sine ulaşıldı. Hedef %{overRate} oranında aşıldı.",
+      "completed": "{type} Hedefi Tamamlandı",
+      "completedDesc": "{name} hedefi başarıyla tamamlandı.",
+      "onTrack": "{type} İyi İlerliyor",
+      "onTrackDesc": "{name} hedefinin %{rate}'si tamamlandı ve yolunda gidiyor.",
+      "atRisk": "{type} Dikkat Gerektiriyor",
+      "atRiskDesc": "{name} hedefi geride kalıyor. Şu ana kadar %{rate} tamamlandı.",
+      "milestone": "Hedefler Aşıldı",
+      "milestoneDesc": "Bu kampanyada {count} hedef belirlenen değerin üzerine çıktı.",
+      "allCompleted": "Tüm Hedefler Tamamlandı",
+      "allCompletedDesc": "Kampanyadaki {count} hedefin tamamı başarıyla gerçekleştirildi."
+    },
+    "summary": {
+      "intro": "\"{campaign}\" kampanyası için ROO (Return on Objectives) analizi tamamlanmıştır.",
+      "performanceRating": "Kampanyanın genel performansı \"{rating}\" olarak değerlendirilmiş olup, ROO skoru {score} olarak hesaplanmıştır.",
+      "rawScore": "(ham skor: {score})",
+      "objectiveSummary": "Kampanyada toplam {total} hedef tanımlanmıştır. Bu hedeflerden {completed} tanesi tamamlanmış veya aşılmış, {onTrack} tanesi yolunda ilerlemekte, {atRisk} tanesi ise dikkat gerektirmektedir.",
+      "keyAchievements": "Öne Çıkan Başarılar",
+      "areasOfConcern": "Dikkat Gerektiren Alanlar",
+      "recommendations": "Öneriler"
+    },
+    "recommendations": {
+      "strategyRevision": "{count} hedef risk altında. Bu hedefler için strateji revizyonu önerilir.",
+      "engagementStrategy": "{type} için içerik stratejisini gözden geçirin ve etkileşim odaklı kampanyalar planlayın.",
+      "ctaOptimization": "{type} için çağrı-aksiyonu (CTA) mesajlarını güçlendirin ve yönlendirme linklerini optimize edin.",
+      "salesFunnel": "{type} için satış hunisini analiz edin ve dönüşüm oranını artıracak iyileştirmeler yapın.",
+      "applySuccess": "Aşılan hedeflerdeki başarılı stratejileri diğer hedeflere de uygulayın.",
+      "brandValue": "Finansal performans iyi ancak stratejik hedefler geride. Marka değeri odaklı aktiviteleri artırın.",
+      "monetization": "Stratejik hedefler başarılı ancak finansal getiri düşük. Monetizasyon stratejilerini gözden geçirin."
+    },
+    "orgSummary": {
+      "title": "{org} - Sponsorluk Performans Özeti",
+      "intro": "Bu rapor, belirlenen dönem içindeki sponsorluk faaliyetlerinin kapsamlı bir analizini sunmaktadır.",
+      "financialSummary": "Dönem içinde toplam {revenue} gelir elde edilmiş, {expenses} harcama yapılmıştır. Net kar {profit} olup, kar marjı %{margin} olarak gerçekleşmiştir. Ortalama ROI %{roi} seviyesindedir.",
+      "rooSummary": "Toplam {campaigns} kampanyada {objectives} stratejik hedef tanımlanmıştır. Ortalama ROO skoru {score} olarak hesaplanmıştır.",
+      "objectiveStats": "{completed} hedef başarıyla tamamlandı veya aşıldı | {exceeded} hedef belirlenen değerin üzerine çıktı | {atRisk} hedef dikkat gerektiriyor",
+      "campaignStats": "{excellent} kampanya mükemmel performans gösterdi (ROO ≥90) | {good} kampanya iyi performans gösterdi (ROO 75-90) | {atRisk} kampanya iyileştirme gerektiriyor (ROO <50)",
+      "conclusionGood": "Sponsorluk faaliyetleri hem finansal hem de stratejik hedefler açısından başarılı bir performans sergilemiştir. Mevcut stratejilerin sürdürülmesi ve başarılı kampanya modellerinin diğer projelere uygulanması önerilmektedir.",
+      "conclusionFinancialGood": "Finansal performans tatmin edici olmakla birlikte, stratejik hedeflerde iyileştirme alanları bulunmaktadır. Marka bilinirliği ve etkileşim odaklı aktivitelerin artırılması önerilmektedir.",
+      "conclusionRooGood": "Stratejik hedefler başarılı bir şekilde gerçekleştirilmekte, ancak finansal getiri beklentilerin altında kalmaktadır. Monetizasyon stratejilerinin gözden geçirilmesi ve sponsorluk paketlerinin yeniden değerlendirilmesi önerilmektedir.",
+      "conclusionNeedsWork": "Hem finansal hem de stratejik performansta iyileştirme alanları tespit edilmiştir. Kapsamlı bir strateji revizyonu ve hedef-bütçe optimizasyonu önerilmektedir.",
+      "urgentAction": "Acil Aksiyon: {count} kampanya kritik seviyede performans göstermektedir ve öncelikli müdahale gerektirmektedir."
+    },
+    "objectiveTypes": {
+      "AWARENESS": "Marka Bilinirliği",
+      "REACH": "Erişim",
+      "ENGAGEMENT": "Etkileşim",
+      "VIDEO_VIEWS": "Video İzlenme",
+      "WEBSITE_TRAFFIC": "Web Sitesi Trafiği",
+      "LEAD_GENERATION": "Potansiyel Müşteri",
+      "APP_DOWNLOAD": "Uygulama İndirme",
+      "SALES": "Satış",
+      "SIGN_UP": "Kayıt",
+      "BRAND_SENTIMENT": "Marka Algısı",
+      "SOCIAL_FOLLOWERS": "Sosyal Medya Takipçisi",
+      "EMAIL_SUBSCRIBERS": "E-posta Abonesi",
+      "CONTENT_CREATION": "İçerik Üretimi",
+      "EVENT_ATTENDANCE": "Etkinlik Katılımı",
+      "CUSTOM": "Özel Hedef"
+    },
+    "objectiveStatus": {
+      "NOT_STARTED": "Başlamadı",
+      "IN_PROGRESS": "Devam Ediyor",
+      "ON_TRACK": "Yolunda",
+      "AT_RISK": "Risk Altında",
+      "BEHIND": "Geride",
+      "COMPLETED": "Tamamlandı",
+      "EXCEEDED": "Aşıldı"
+    }
+  },
+  "discover": {
+    "title": "Keşfet",
+    "tabs": {
+      "creators": "İçerik Üreticileri",
+      "sponsors": "Sponsorlar & Markalar"
+    },
+    "filters": {
+      "category": "Kategori",
+      "followers": "Takipçi Sayısı",
+      "minROI": "Minimum ROI",
+      "trustScore": "Güven Skoru",
+      "verified": "Sadece Doğrulanmış",
+      "partnerType": "Partner Tipi"
+    },
+    "sort": {
+      "trustScore": "Güven Skoru",
+      "followers": "Takipçi Sayısı",
+      "roi": "Ortalama ROI",
+      "engagement": "Etkileşim Oranı",
+      "budget": "Ortalama Bütçe",
+      "deals": "Tamamlanan İş"
+    },
+    "card": {
+      "followers": "Takipçi",
+      "avgROI": "Ort. ROI",
+      "avgROO": "Ort. ROO",
+      "trustScore": "Güven",
+      "campaigns": "Kampanya",
+      "engagement": "Etkileşim",
+      "sendOffer": "Teklif Gönder",
+      "contact": "İletişime Geç",
+      "viewProfile": "Profil",
+      "featured": "Öne Çıkan"
+    },
+    "sponsor": {
+      "avgBudget": "Ort. Bütçe",
+      "paymentSpeed": "Ödeme Hızı",
+      "collaboration": "İş Birliği"
+    }
+  },
+  "matches": {
+    "title": "Eşleşmeler",
+    "tabs": {
+      "recommendations": "Öneriler",
+      "notifications": "Bildirimler"
+    },
+    "matchScore": "Eşleşme Skoru",
+    "potentialROI": "Tahmini ROI",
+    "potentialROO": "Tahmini ROO",
+    "confidence": {
+      "high": "Yüksek",
+      "medium": "Orta",
+      "low": "Düşük"
+    },
+    "actions": {
+      "contact": "İletişime Geç",
+      "viewProfile": "Profil",
+      "favorite": "Favorilere Ekle",
+      "dismiss": "Gizle"
+    },
+    "reasons": {
+      "audience": "Kitle Uyumu",
+      "performance": "Performans",
+      "budget": "Bütçe",
+      "category": "Kategori"
+    }
+  },
+  "marketplace": {
+    "title": "Rapor Pazaryeri",
+    "tabs": {
+      "publishers": "Yayıncı Raporları",
+      "sponsors": "Sponsor Karneleri"
+    },
+    "report": {
+      "verified": "Doğrulanmış",
+      "preview": "Önizleme",
+      "buy": "Satın Al",
+      "viewWithSubscription": "Aboneliğinle Görüntüle",
+      "credits": "kredi",
+      "oneTimePurchase": "Tek Seferlik"
+    }
+  },
+  "mediaKit": {
+    "title": "Media Kit Builder",
+    "tabs": {
+      "profile": "Profil",
+      "files": "Dosyalar",
+      "stats": "İstatistikler",
+      "pricing": "Fiyatlandırma"
+    },
+    "profile": {
+      "channelName": "Kanal / Kulüp Adı",
+      "tagline": "Slogan",
+      "description": "Açıklama",
+      "category": "Kategori",
+      "location": "Konum"
+    },
+    "files": {
+      "upload": "Dosya Yükle",
+      "dragDrop": "Dosyaları sürükleyip bırakın",
+      "supported": "PDF, PPTX, XLSX, PNG, JPG desteklenir",
+      "public": "Herkese Açık",
+      "private": "Gizli"
+    },
+    "stats": {
+      "totalFollowers": "Toplam Takipçi",
+      "avgViews": "Ortalama İzlenme",
+      "avgROI": "Ortalama ROI",
+      "avgROO": "Ortalama ROO",
+      "completedCampaigns": "Tamamlanan Kampanya"
+    }
+  },
+  "settings": {
+    "title": "Ayarlar",
+    "tabs": {
+      "profile": "Profil",
+      "organization": "Organizasyon",
+      "subscription": "Abonelik",
+      "notifications": "Bildirimler",
+      "privacy": "Veri Gizliliği"
+    },
+    "profile": {
+      "name": "İsim",
+      "email": "E-posta",
+      "phone": "Telefon",
+      "avatar": "Profil Fotoğrafı",
+      "timezone": "Saat Dilimi",
+      "language": "Dil"
+    },
+    "organization": {
+      "name": "Şirket Adı",
+      "type": "Organizasyon Tipi",
+      "taxId": "Vergi No",
+      "taxOffice": "Vergi Dairesi",
+      "address": "Adres",
+      "members": "Ekip Üyeleri",
+      "addMember": "Üye Ekle"
+    },
+    "subscription": {
+      "currentPlan": "Mevcut Plan",
+      "manage": "Aboneliği Yönet",
+      "invoices": "Fatura Geçmişi",
+      "upgrade": "Planı Yükselt"
+    },
+    "notifications": {
+      "email": "E-posta Bildirimleri",
+      "roiAlerts": "ROI Hedef Uyarıları",
+      "campaignExpiry": "Kampanya Bitiş Uyarıları",
+      "newOffers": "Yeni Teklif Bildirimleri"
+    },
+    "privacy": {
+      "shareData": "Verilerimi Rapor Pazarına Aç",
+      "anonymous": "Anonim Paylaşım",
+      "openProfile": "Açık Profil"
+    }
+  },
+  "admin": {
+    "title": "Admin Paneli",
+    "tabs": {
+      "overview": "Sistem Özeti",
+      "users": "Kullanıcı Yönetimi",
+      "sponsors": "Sponsorluk Havuzu",
+      "logs": "Sistem Hareketleri"
+    },
+    "stats": {
+      "totalUsers": "Toplam Kullanıcı",
+      "mrr": "Aylık Yinelenen Gelir",
+      "arr": "Yıllık Yinelenen Gelir",
+      "activeSubscriptions": "Aktif Abonelikler"
+    },
+    "users": {
+      "search": "Kullanıcı Ara",
+      "suspend": "Askıya Al",
+      "activate": "Aktifleştir",
+      "changeRole": "Rol Değiştir"
+    }
+  },
+  "auth": {
+    "signIn": "Giriş Yap",
+    "signUp": "Kayıt Ol",
+    "signOut": "Çıkış Yap",
+    "forgotPassword": "Şifremi Unuttum",
+    "resetPassword": "Şifre Sıfırla",
+    "email": "E-posta",
+    "password": "Şifre",
+    "confirmPassword": "Şifre Tekrar",
+    "rememberMe": "Beni Hatırla",
+    "orContinueWith": "veya şununla devam et",
+    "google": "Google ile Giriş",
+    "magicLink": "Magic Link Gönder"
+  },
+  "errors": {
+    "required": "Bu alan zorunludur",
+    "invalidEmail": "Geçerli bir e-posta adresi girin",
+    "minLength": "En az {min} karakter olmalı",
+    "maxLength": "En fazla {max} karakter olabilir",
+    "generic": "Bir hata oluştu",
+    "notFound": "Sayfa bulunamadı",
+    "unauthorized": "Yetkisiz erişim",
+    "forbidden": "Erişim engellendi"
+  },
+  "toast": {
+    "saved": "Kaydedildi!",
+    "deleted": "Silindi!",
+    "copied": "Kopyalandı!",
+    "sent": "Gönderildi!",
+    "updated": "Güncellendi!",
+    "error": "Bir hata oluştu"
+  },
+  "format": {
+    "currency": "{value} ₺",
+    "percentage": "%{value}",
+    "number": "{value}"
+  }
+}

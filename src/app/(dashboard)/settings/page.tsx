@@ -48,14 +48,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast"
 import { Toaster } from "@/components/ui/toaster"
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/hooks/use-locale"
 
-// Navigation items
-const navItems = [
-  { id: "profile", label: "Profil", icon: User },
-  { id: "organization", label: "Organizasyon", icon: Building2 },
-  { id: "subscription", label: "Abonelik", icon: CreditCard },
-  { id: "notifications", label: "Bildirimler", icon: Bell },
-  { id: "data-privacy", label: "Veri Gizliliği", icon: Shield },
+// Navigation items with localization
+const getNavItems = (locale: string) => [
+  { id: "profile", label: locale === 'tr' ? "Profil" : "Profile", icon: User },
+  { id: "organization", label: locale === 'tr' ? "Organizasyon" : "Organization", icon: Building2 },
+  { id: "subscription", label: locale === 'tr' ? "Abonelik" : "Subscription", icon: CreditCard },
+  { id: "notifications", label: locale === 'tr' ? "Bildirimler" : "Notifications", icon: Bell },
+  { id: "data-privacy", label: locale === 'tr' ? "Veri Gizliliği" : "Data Privacy", icon: Shield },
 ]
 
 // Mock user data
@@ -151,10 +152,135 @@ const mockDataPrivacy = {
 
 export default function SettingsPage() {
   const { toast } = useToast()
+  const { locale } = useLocale()
   const [activeSection, setActiveSection] = useState("profile")
   const [isSaving, setIsSaving] = useState(false)
   const [isAddingMember, setIsAddingMember] = useState(false)
   const [newMemberEmail, setNewMemberEmail] = useState("")
+  
+  // Get localized nav items
+  const navItems = getNavItems(locale)
+  
+  // Localized texts
+  const t = {
+    settings: locale === 'tr' ? 'Ayarlar' : 'Settings',
+    save: locale === 'tr' ? 'Kaydet' : 'Save',
+    saving: locale === 'tr' ? 'Kaydediliyor...' : 'Saving...',
+    dashboard: locale === 'tr' ? 'Dashboard' : 'Dashboard',
+    
+    // Profile
+    profileInfo: locale === 'tr' ? 'Profil Bilgileri' : 'Profile Information',
+    profileDesc: locale === 'tr' ? 'Kişisel bilgilerinizi ve sosyal medya bağlantılarınızı yönetin.' : 'Manage your personal information and social media links.',
+    fullName: locale === 'tr' ? 'Ad Soyad' : 'Full Name',
+    email: locale === 'tr' ? 'E-posta' : 'Email',
+    phone: locale === 'tr' ? 'Telefon' : 'Phone',
+    timezone: locale === 'tr' ? 'Saat Dilimi' : 'Timezone',
+    uploadPhoto: locale === 'tr' ? 'Fotoğraf Yükle' : 'Upload Photo',
+    socialLinks: locale === 'tr' ? 'Sosyal Medya & Kanal Linkleri' : 'Social Media & Channel Links',
+    socialLinksDesc: locale === 'tr' ? 'Sponsorlarınızın sizi bulabilmesi için bağlantılarınızı ekleyin.' : 'Add your links so sponsors can find you.',
+    website: locale === 'tr' ? 'Web Sitesi' : 'Website',
+    
+    // Organization
+    orgInfo: locale === 'tr' ? 'Organizasyon Bilgileri' : 'Organization Information',
+    orgDesc: locale === 'tr' ? 'Şirket veya kanal bilgilerinizi yönetin.' : 'Manage your company or channel information.',
+    orgName: locale === 'tr' ? 'Organizasyon Adı' : 'Organization Name',
+    orgType: locale === 'tr' ? 'Tür' : 'Type',
+    taxId: locale === 'tr' ? 'Vergi No' : 'Tax ID',
+    taxOffice: locale === 'tr' ? 'Vergi Dairesi' : 'Tax Office',
+    address: locale === 'tr' ? 'Adres' : 'Address',
+    teamMembers: locale === 'tr' ? 'Ekip Üyeleri' : 'Team Members',
+    teamMembersDesc: locale === 'tr' ? 'Organizasyonunuza erişimi olan kişiler.' : 'People with access to your organization.',
+    addMember: locale === 'tr' ? 'Üye Ekle' : 'Add Member',
+    inviteMember: locale === 'tr' ? 'Yeni üye davet et' : 'Invite new member',
+    sendInvite: locale === 'tr' ? 'Davet Gönder' : 'Send Invite',
+    owner: locale === 'tr' ? 'Sahip' : 'Owner',
+    admin: locale === 'tr' ? 'Yönetici' : 'Admin',
+    member: locale === 'tr' ? 'Üye' : 'Member',
+    remove: locale === 'tr' ? 'Kaldır' : 'Remove',
+    
+    // Subscription
+    currentPlan: locale === 'tr' ? 'Mevcut Plan' : 'Current Plan',
+    currentPlanDesc: locale === 'tr' ? 'Abonelik durumunuz ve kullanım limitleriniz.' : 'Your subscription status and usage limits.',
+    active: locale === 'tr' ? 'Aktif' : 'Active',
+    renewsOn: locale === 'tr' ? 'Yenileme:' : 'Renews on:',
+    usage: locale === 'tr' ? 'Kullanım' : 'Usage',
+    campaigns: locale === 'tr' ? 'Kampanyalar' : 'Campaigns',
+    sponsors: locale === 'tr' ? 'Sponsorlar' : 'Sponsors',
+    members: locale === 'tr' ? 'Üyeler' : 'Members',
+    manageSubscription: locale === 'tr' ? 'Aboneliği Yönet' : 'Manage Subscription',
+    manageStripe: locale === 'tr' ? 'Stripe Müşteri Portalı' : 'Stripe Customer Portal',
+    invoiceHistory: locale === 'tr' ? 'Fatura Geçmişi' : 'Invoice History',
+    invoiceHistoryDesc: locale === 'tr' ? 'Geçmiş faturalarınızı indirin.' : 'Download your past invoices.',
+    date: locale === 'tr' ? 'Tarih' : 'Date',
+    amount: locale === 'tr' ? 'Tutar' : 'Amount',
+    status: locale === 'tr' ? 'Durum' : 'Status',
+    invoice: locale === 'tr' ? 'Fatura' : 'Invoice',
+    paid: locale === 'tr' ? 'Ödendi' : 'Paid',
+    
+    // Notifications
+    notifSettings: locale === 'tr' ? 'Bildirim Ayarları' : 'Notification Settings',
+    notifDesc: locale === 'tr' ? 'Hangi durumlarda e-posta almak istediğinizi seçin.' : 'Choose when you want to receive emails.',
+    campaignAlerts: locale === 'tr' ? 'Kampanya Uyarıları' : 'Campaign Alerts',
+    roiTarget: locale === 'tr' ? 'ROI hedefine ulaşıldığında' : 'When ROI target is reached',
+    campaignEnd: locale === 'tr' ? 'Kampanya süresi dolduğunda' : 'When campaign ends',
+    newSponsor: locale === 'tr' ? 'Yeni sponsor teklifi geldiğinde' : 'When new sponsor offer arrives',
+    paymentReceived: locale === 'tr' ? 'Ödeme alındığında' : 'When payment is received',
+    reports: locale === 'tr' ? 'Raporlar' : 'Reports',
+    weeklyReport: locale === 'tr' ? 'Haftalık özet raporu' : 'Weekly summary report',
+    monthlyReport: locale === 'tr' ? 'Aylık detaylı rapor' : 'Monthly detailed report',
+    
+    // Data Privacy
+    dataPrivacy: locale === 'tr' ? 'Veri Gizliliği & Rapor Pazaryeri' : 'Data Privacy & Report Marketplace',
+    dataPrivacyDesc: locale === 'tr' ? 'Verilerinizin nasıl paylaşılacağını kontrol edin.' : 'Control how your data is shared.',
+    marketplaceAccess: locale === 'tr' ? 'Rapor Pazaryeri Erişimi' : 'Report Marketplace Access',
+    enableMarketplace: locale === 'tr' ? 'Rapor Pazaryeri\'ne Katıl' : 'Join Report Marketplace',
+    enableMarketplaceDesc: locale === 'tr' ? 'Verilerinizi anonim veya açık olarak rapor pazaryerinde satışa sunun.' : 'Offer your data for sale on the report marketplace, anonymously or openly.',
+    profileVisibility: locale === 'tr' ? 'Profil Görünürlüğü' : 'Profile Visibility',
+    anonymous: locale === 'tr' ? 'Anonim' : 'Anonymous',
+    anonymousDesc: locale === 'tr' ? 'Veriler isim gizlenerek satılır' : 'Data is sold with name hidden',
+    public: locale === 'tr' ? 'Açık Profil' : 'Public Profile',
+    publicDesc: locale === 'tr' ? 'Veriler isminizle birlikte satılır' : 'Data is sold with your name',
+    hidden: locale === 'tr' ? 'Gizli' : 'Hidden',
+    hiddenDesc: locale === 'tr' ? 'Veriler pazaryerinde görünmez' : 'Data is not visible in marketplace',
+    sharedData: locale === 'tr' ? 'Paylaşılan Veriler' : 'Shared Data',
+    sharedDataDesc: locale === 'tr' ? 'Hangi verilerin raporlara dahil edileceğini seçin.' : 'Choose which data to include in reports.',
+    roiHistory: locale === 'tr' ? 'ROI Geçmişi' : 'ROI History',
+    rooScores: locale === 'tr' ? 'ROO Skorları' : 'ROO Scores',
+    audienceDemo: locale === 'tr' ? 'Kitle Demografisi' : 'Audience Demographics',
+    engagementMetrics: locale === 'tr' ? 'Etkileşim Metrikleri' : 'Engagement Metrics',
+    campaignHistory: locale === 'tr' ? 'Kampanya Geçmişi' : 'Campaign History',
+    revenueData: locale === 'tr' ? 'Gelir Verileri' : 'Revenue Data',
+    pricing: locale === 'tr' ? 'Fiyatlandırma' : 'Pricing',
+    reportPrice: locale === 'tr' ? 'Rapor Fiyatı' : 'Report Price',
+    credits: locale === 'tr' ? 'kredi' : 'credits',
+    revenueShare: locale === 'tr' ? 'Gelir Paylaşımı' : 'Revenue Share',
+    yourShare: locale === 'tr' ? 'Sizin Payınız' : 'Your Share',
+    platformFee: locale === 'tr' ? 'Platform Ücreti' : 'Platform Fee',
+    earnings: locale === 'tr' ? 'Kazançlar' : 'Earnings',
+    totalSold: locale === 'tr' ? 'Satılan Rapor' : 'Reports Sold',
+    totalEarnings: locale === 'tr' ? 'Toplam Kazanç' : 'Total Earnings',
+    pendingPayout: locale === 'tr' ? 'Bekleyen Ödeme' : 'Pending Payout',
+    security: locale === 'tr' ? 'Güvenlik' : 'Security',
+    securityNote: locale === 'tr' ? 'Tüm veriler şifrelenerek saklanır. Hassas finansal bilgiler (tam gelir, banka bilgileri vb.) hiçbir zaman paylaşılmaz.' : 'All data is stored encrypted. Sensitive financial information (full income, bank details, etc.) is never shared.',
+    
+    // Toast messages
+    profileUpdated: locale === 'tr' ? 'Profil Güncellendi! ✨' : 'Profile Updated! ✨',
+    profileUpdatedDesc: locale === 'tr' ? 'Değişiklikleriniz başarıyla kaydedildi.' : 'Your changes have been saved successfully.',
+    orgUpdated: locale === 'tr' ? 'Organizasyon Güncellendi! 🏢' : 'Organization Updated! 🏢',
+    orgUpdatedDesc: locale === 'tr' ? 'Organizasyon bilgileriniz kaydedildi.' : 'Your organization information has been saved.',
+    notifUpdated: locale === 'tr' ? 'Bildirim Ayarları Kaydedildi! 🔔' : 'Notification Settings Saved! 🔔',
+    notifUpdatedDesc: locale === 'tr' ? 'Bildirim tercihleriniz güncellendi.' : 'Your notification preferences have been updated.',
+    privacyUpdated: locale === 'tr' ? 'Gizlilik Ayarları Kaydedildi! 🔒' : 'Privacy Settings Saved! 🔒',
+    privacyUpdatedDesc: locale === 'tr' ? 'Veri paylaşım tercihleriniz güncellendi.' : 'Your data sharing preferences have been updated.',
+    emailRequired: locale === 'tr' ? 'E-posta Gerekli' : 'Email Required',
+    emailRequiredDesc: locale === 'tr' ? 'Lütfen bir e-posta adresi girin.' : 'Please enter an email address.',
+    inviteSent: locale === 'tr' ? 'Davet Gönderildi! 📧' : 'Invitation Sent! 📧',
+    inviteSentDesc: locale === 'tr' ? 'adresine davet gönderildi.' : 'Invitation sent to',
+    memberRemoved: locale === 'tr' ? 'Üye Kaldırıldı' : 'Member Removed',
+    memberRemovedDesc: locale === 'tr' ? 'Üye organizasyondan çıkarıldı.' : 'Member has been removed from the organization.',
+    subscriptionManage: locale === 'tr' ? 'Yönlendiriliyor...' : 'Redirecting...',
+    subscriptionManageDesc: locale === 'tr' ? 'Stripe portalına yönlendiriliyorsunuz.' : 'You are being redirected to Stripe portal.',
+  }
   
   // Form states
   const [profile, setProfile] = useState(mockUser)
@@ -168,8 +294,8 @@ export default function SettingsPage() {
     await new Promise(resolve => setTimeout(resolve, 1500))
     setIsSaving(false)
     toast({
-      title: "Profil Güncellendi! ✨",
-      description: "Değişiklikleriniz başarıyla kaydedildi.",
+      title: t.profileUpdated,
+      description: t.profileUpdatedDesc,
       variant: "success",
     })
   }
@@ -179,8 +305,8 @@ export default function SettingsPage() {
     await new Promise(resolve => setTimeout(resolve, 1500))
     setIsSaving(false)
     toast({
-      title: "Organizasyon Güncellendi! 🏢",
-      description: "Organizasyon bilgileriniz kaydedildi.",
+      title: t.orgUpdated,
+      description: t.orgUpdatedDesc,
       variant: "success",
     })
   }
@@ -190,8 +316,8 @@ export default function SettingsPage() {
     await new Promise(resolve => setTimeout(resolve, 1000))
     setIsSaving(false)
     toast({
-      title: "Bildirim Ayarları Kaydedildi! 🔔",
-      description: "Bildirim tercihleriniz güncellendi.",
+      title: t.notifUpdated,
+      description: t.notifUpdatedDesc,
       variant: "success",
     })
   }
@@ -201,8 +327,8 @@ export default function SettingsPage() {
     await new Promise(resolve => setTimeout(resolve, 1000))
     setIsSaving(false)
     toast({
-      title: "Gizlilik Ayarları Kaydedildi! 🔒",
-      description: "Veri paylaşım tercihleriniz güncellendi.",
+      title: t.privacyUpdated,
+      description: t.privacyUpdatedDesc,
       variant: "success",
     })
   }
@@ -210,8 +336,8 @@ export default function SettingsPage() {
   const handleAddMember = async () => {
     if (!newMemberEmail) {
       toast({
-        title: "E-posta Gerekli",
-        description: "Lütfen bir e-posta adresi girin.",
+        title: t.emailRequired,
+        description: t.emailRequiredDesc,
         variant: "destructive",
       })
       return
@@ -238,8 +364,8 @@ export default function SettingsPage() {
     setIsAddingMember(false)
     setNewMemberEmail("")
     toast({
-      title: "Davet Gönderildi! 📧",
-      description: `${newMemberEmail} adresine davet gönderildi.`,
+      title: t.inviteSent,
+      description: `${t.inviteSentDesc} ${newMemberEmail}`,
       variant: "success",
     })
   }
@@ -250,15 +376,15 @@ export default function SettingsPage() {
       members: prev.members.filter(m => m.id !== memberId)
     }))
     toast({
-      title: "Üye Kaldırıldı",
-      description: "Üye organizasyondan kaldırıldı.",
+      title: t.memberRemoved,
+      description: t.memberRemovedDesc,
     })
   }
 
   const handleManageSubscription = async () => {
     toast({
-      title: "Yönlendiriliyor...",
-      description: "Stripe Müşteri Portalı'na yönlendiriliyorsunuz.",
+      title: t.subscriptionManage,
+      description: t.subscriptionManageDesc,
     })
     
     // Redirect to Stripe Customer Portal
@@ -276,15 +402,15 @@ export default function SettingsPage() {
         window.location.href = data.url
       } else {
         toast({
-          title: "Demo Modu",
-          description: "Stripe entegrasyonu aktif değil. Gerçek ortamda portal açılacaktır.",
+          title: locale === 'tr' ? "Demo Modu" : "Demo Mode",
+          description: locale === 'tr' ? "Stripe entegrasyonu aktif değil. Gerçek ortamda portal açılacaktır." : "Stripe integration is not active. Portal will open in production.",
         })
       }
     } catch (error) {
       console.error("Portal error:", error)
       toast({
-        title: "Demo Modu",
-        description: "Stripe entegrasyonu aktif değil. Gerçek ortamda portal açılacaktır.",
+        title: locale === 'tr' ? "Demo Modu" : "Demo Mode",
+        description: locale === 'tr' ? "Stripe entegrasyonu aktif değil. Gerçek ortamda portal açılacaktır." : "Stripe integration is not active. Portal will open in production.",
       })
     }
   }
@@ -297,10 +423,10 @@ export default function SettingsPage() {
           <div className="flex items-center gap-4">
             <Link href="/" className="flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
               <ChevronLeft className="h-4 w-4" />
-              <span className="text-sm font-medium">Dashboard</span>
+              <span className="text-sm font-medium">{t.dashboard}</span>
             </Link>
             <div className="h-6 w-px bg-slate-200 dark:bg-slate-700" />
-            <h1 className="text-lg font-semibold text-slate-900 dark:text-white">Ayarlar</h1>
+            <h1 className="text-lg font-semibold text-slate-900 dark:text-white">{t.settings}</h1>
           </div>
           <Button 
             onClick={() => {
@@ -318,12 +444,12 @@ export default function SettingsPage() {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                 </svg>
-                Kaydediliyor...
+                {t.saving}
               </>
             ) : (
               <>
                 <Save className="h-4 w-4" />
-                Kaydet
+                {t.save}
               </>
             )}
           </Button>
@@ -363,8 +489,8 @@ export default function SettingsPage() {
             {activeSection === "profile" && (
               <div className="space-y-6">
                 <div>
-                  <h2 className="text-xl font-semibold text-slate-900 dark:text-white">Profil Bilgileri</h2>
-                  <p className="text-sm text-slate-500 mt-1">Kişisel bilgilerinizi ve sosyal medya bağlantılarınızı yönetin.</p>
+                  <h2 className="text-xl font-semibold text-slate-900 dark:text-white">{t.profileInfo}</h2>
+                  <p className="text-sm text-slate-500 mt-1">{t.profileDesc}</p>
                 </div>
 
                 {/* Avatar & Basic Info */}
@@ -382,7 +508,7 @@ export default function SettingsPage() {
                           </button>
                         </div>
                         <Button variant="outline" size="sm" className="text-xs">
-                          Fotoğraf Yükle
+                          {t.uploadPhoto}
                         </Button>
                       </div>
 
@@ -390,7 +516,7 @@ export default function SettingsPage() {
                       <div className="flex-1 grid gap-4">
                         <div className="grid sm:grid-cols-2 gap-4">
                           <div className="space-y-2">
-                            <Label htmlFor="name">Ad Soyad</Label>
+                            <Label htmlFor="name">{t.fullName}</Label>
                             <Input
                               id="name"
                               value={profile.name}
@@ -398,7 +524,7 @@ export default function SettingsPage() {
                             />
                           </div>
                           <div className="space-y-2">
-                            <Label htmlFor="email">E-posta</Label>
+                            <Label htmlFor="email">{t.email}</Label>
                             <Input
                               id="email"
                               type="email"
@@ -409,7 +535,7 @@ export default function SettingsPage() {
                         </div>
                         <div className="grid sm:grid-cols-2 gap-4">
                           <div className="space-y-2">
-                            <Label htmlFor="phone">Telefon</Label>
+                            <Label htmlFor="phone">{t.phone}</Label>
                             <Input
                               id="phone"
                               value={profile.phone}
@@ -417,14 +543,14 @@ export default function SettingsPage() {
                             />
                           </div>
                           <div className="space-y-2">
-                            <Label htmlFor="timezone">Saat Dilimi</Label>
+                            <Label htmlFor="timezone">{t.timezone}</Label>
                             <Select value={profile.timezone} onValueChange={(v) => setProfile({ ...profile, timezone: v })}>
                               <SelectTrigger>
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent>
                                 <SelectItem value="Europe/Istanbul">İstanbul (GMT+3)</SelectItem>
-                                <SelectItem value="Europe/London">Londra (GMT+0)</SelectItem>
+                                <SelectItem value="Europe/London">{locale === 'tr' ? 'Londra' : 'London'} (GMT+0)</SelectItem>
                                 <SelectItem value="America/New_York">New York (GMT-5)</SelectItem>
                               </SelectContent>
                             </Select>
@@ -438,8 +564,8 @@ export default function SettingsPage() {
                 {/* Social Links */}
                 <Card className="border-0 shadow-sm">
                   <CardHeader>
-                    <CardTitle className="text-base">Sosyal Medya & Kanal Linkleri</CardTitle>
-                    <CardDescription>Sponsorlarınızın sizi bulabilmesi için bağlantılarınızı ekleyin.</CardDescription>
+                    <CardTitle className="text-base">{t.socialLinks}</CardTitle>
+                    <CardDescription>{t.socialLinksDesc}</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="grid sm:grid-cols-2 gap-4">
@@ -449,7 +575,7 @@ export default function SettingsPage() {
                           YouTube
                         </Label>
                         <Input
-                          placeholder="https://youtube.com/@kanal"
+                          placeholder="https://youtube.com/@channel"
                           value={profile.socialLinks.youtube}
                           onChange={(e) => setProfile({ 
                             ...profile, 
@@ -463,7 +589,7 @@ export default function SettingsPage() {
                           Instagram
                         </Label>
                         <Input
-                          placeholder="@kullaniciadi"
+                          placeholder="@username"
                           value={profile.socialLinks.instagram}
                           onChange={(e) => setProfile({ 
                             ...profile, 
@@ -477,7 +603,7 @@ export default function SettingsPage() {
                           Twitter / X
                         </Label>
                         <Input
-                          placeholder="@kullaniciadi"
+                          placeholder="@username"
                           value={profile.socialLinks.twitter}
                           onChange={(e) => setProfile({ 
                             ...profile, 
@@ -491,7 +617,7 @@ export default function SettingsPage() {
                           LinkedIn
                         </Label>
                         <Input
-                          placeholder="kullaniciadi"
+                          placeholder="username"
                           value={profile.socialLinks.linkedin}
                           onChange={(e) => setProfile({ 
                             ...profile, 
@@ -503,7 +629,7 @@ export default function SettingsPage() {
                     <div className="space-y-2">
                       <Label className="flex items-center gap-2">
                         <Globe className="h-4 w-4 text-slate-500" />
-                        Web Sitesi
+                        {t.website}
                       </Label>
                       <Input
                         placeholder="https://example.com"
@@ -523,20 +649,20 @@ export default function SettingsPage() {
             {activeSection === "organization" && (
               <div className="space-y-6">
                 <div>
-                  <h2 className="text-xl font-semibold text-slate-900 dark:text-white">Organizasyon Bilgileri</h2>
-                  <p className="text-sm text-slate-500 mt-1">Şirket bilgilerinizi ve ekip üyelerinizi yönetin.</p>
+                  <h2 className="text-xl font-semibold text-slate-900 dark:text-white">{t.orgInfo}</h2>
+                  <p className="text-sm text-slate-500 mt-1">{t.orgDesc}</p>
                 </div>
 
                 {/* Company Info */}
                 <Card className="border-0 shadow-sm">
                   <CardHeader>
-                    <CardTitle className="text-base">Şirket Bilgileri</CardTitle>
-                    <CardDescription>Fatura ve resmi işlemler için gerekli bilgiler.</CardDescription>
+                    <CardTitle className="text-base">{locale === 'tr' ? 'Şirket Bilgileri' : 'Company Information'}</CardTitle>
+                    <CardDescription>{locale === 'tr' ? 'Fatura ve resmi işlemler için gerekli bilgiler.' : 'Required information for invoices and official processes.'}</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="orgName">Şirket / Kanal Adı</Label>
+                        <Label htmlFor="orgName">{t.orgName}</Label>
                         <Input
                           id="orgName"
                           value={organization.name}
@@ -544,22 +670,22 @@ export default function SettingsPage() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="orgType">Organizasyon Tipi</Label>
+                        <Label htmlFor="orgType">{t.orgType}</Label>
                         <Select value={organization.type} onValueChange={(v) => setOrganization({ ...organization, type: v })}>
                           <SelectTrigger>
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="YOUTUBER">İçerik Üreticisi</SelectItem>
-                            <SelectItem value="CLUB">Kulüp / Topluluk</SelectItem>
-                            <SelectItem value="BUSINESS">İşletme / Ajans</SelectItem>
+                            <SelectItem value="YOUTUBER">{locale === 'tr' ? 'İçerik Üreticisi' : 'Content Creator'}</SelectItem>
+                            <SelectItem value="CLUB">{locale === 'tr' ? 'Kulüp / Topluluk' : 'Club / Community'}</SelectItem>
+                            <SelectItem value="BUSINESS">{locale === 'tr' ? 'İşletme / Ajans' : 'Business / Agency'}</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
                     </div>
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="taxId">Vergi Numarası</Label>
+                        <Label htmlFor="taxId">{t.taxId}</Label>
                         <Input
                           id="taxId"
                           value={organization.taxId}
@@ -567,7 +693,7 @@ export default function SettingsPage() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="taxOffice">Vergi Dairesi</Label>
+                        <Label htmlFor="taxOffice">{t.taxOffice}</Label>
                         <Input
                           id="taxOffice"
                           value={organization.taxOffice}
@@ -576,7 +702,7 @@ export default function SettingsPage() {
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="address">Adres</Label>
+                      <Label htmlFor="address">{t.address}</Label>
                       <Textarea
                         id="address"
                         value={organization.address}
@@ -586,7 +712,7 @@ export default function SettingsPage() {
                     </div>
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="orgEmail">E-posta</Label>
+                        <Label htmlFor="orgEmail">{t.email}</Label>
                         <Input
                           id="orgEmail"
                           type="email"
@@ -595,7 +721,7 @@ export default function SettingsPage() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="orgPhone">Telefon</Label>
+                        <Label htmlFor="orgPhone">{t.phone}</Label>
                         <Input
                           id="orgPhone"
                           value={organization.phone}
@@ -611,8 +737,8 @@ export default function SettingsPage() {
                   <CardHeader>
                     <div className="flex items-center justify-between">
                       <div>
-                        <CardTitle className="text-base">Ekip Üyeleri</CardTitle>
-                        <CardDescription>Organizasyonunuzdaki kullanıcıları yönetin.</CardDescription>
+                        <CardTitle className="text-base">{t.teamMembers}</CardTitle>
+                        <CardDescription>{t.teamMembersDesc}</CardDescription>
                       </div>
                     </div>
                   </CardHeader>
@@ -620,7 +746,7 @@ export default function SettingsPage() {
                     {/* Add Member Form */}
                     <div className="flex items-center gap-2 mb-4 p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50">
                       <Input
-                        placeholder="E-posta adresi girin..."
+                        placeholder={locale === 'tr' ? "E-posta adresi girin..." : "Enter email address..."}
                         value={newMemberEmail}
                         onChange={(e) => setNewMemberEmail(e.target.value)}
                         className="flex-1"
@@ -637,12 +763,12 @@ export default function SettingsPage() {
                               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                             </svg>
-                            Ekleniyor...
+                            {locale === 'tr' ? 'Ekleniyor...' : 'Adding...'}
                           </>
                         ) : (
                           <>
                             <Plus className="h-4 w-4" />
-                            Üye Ekle
+                            {t.addMember}
                           </>
                         )}
                       </Button>
@@ -670,7 +796,7 @@ export default function SettingsPage() {
                               member.role === "MEMBER" && "border-slate-500/50"
                             )}>
                               {member.role === "OWNER" && <Crown className="h-3 w-3 mr-1" />}
-                              {member.role === "OWNER" ? "Sahip" : member.role === "ADMIN" ? "Yönetici" : "Üye"}
+                              {member.role === "OWNER" ? t.owner : member.role === "ADMIN" ? t.admin : t.member}
                             </Badge>
                             {member.role !== "OWNER" && (
                               <Button 

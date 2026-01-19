@@ -40,6 +40,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/hooks/use-locale"
 
 // Mock data for sponsor's portfolio
 const portfolioStats = {
@@ -174,8 +175,55 @@ const proposalStatusConfig = {
 }
 
 export default function SponsorPortalPage() {
+  const { locale } = useLocale()
   const [activeTab, setActiveTab] = useState("dashboard")
   const [proposalFilter, setProposalFilter] = useState("all")
+  
+  // Localized texts
+  const t = {
+    sponsorPortal: locale === 'tr' ? 'Sponsor Portalı' : 'Sponsor Portal',
+    dashboard: locale === 'tr' ? 'Dashboard' : 'Dashboard',
+    portfolio: locale === 'tr' ? 'Portföyüm' : 'My Portfolio',
+    offers: locale === 'tr' ? 'Teklifler' : 'Offers',
+    totalInvestment: locale === 'tr' ? 'Toplam Yatırım' : 'Total Investment',
+    avgROI: locale === 'tr' ? 'Ortalama ROI' : 'Average ROI',
+    avgROO: locale === 'tr' ? 'Ortalama ROO' : 'Average ROO',
+    activePartnerships: locale === 'tr' ? 'Aktif Ortaklık' : 'Active Partnerships',
+    pendingProposals: locale === 'tr' ? 'Bekleyen Teklif' : 'Pending Proposals',
+    completedCampaigns: locale === 'tr' ? 'Tamamlanan Kampanya' : 'Completed Campaigns',
+    topPerformers: locale === 'tr' ? 'En İyi Performans' : 'Top Performers',
+    recentOffers: locale === 'tr' ? 'Son Teklifler' : 'Recent Offers',
+    viewAll: locale === 'tr' ? 'Tümünü Gör' : 'View All',
+    sponsoredChannels: locale === 'tr' ? 'Desteklenen Kanallar' : 'Sponsored Channels',
+    searchChannels: locale === 'tr' ? 'Kanal ara...' : 'Search channels...',
+    sortBy: locale === 'tr' ? 'Sırala' : 'Sort by',
+    roi: locale === 'tr' ? 'ROI' : 'ROI',
+    roo: locale === 'tr' ? 'ROO' : 'ROO',
+    investment: locale === 'tr' ? 'Yatırım' : 'Investment',
+    followers: locale === 'tr' ? 'Takipçi' : 'Followers',
+    campaigns: locale === 'tr' ? 'kampanya' : 'campaigns',
+    active: locale === 'tr' ? 'Aktif' : 'Active',
+    completed: locale === 'tr' ? 'Tamamlandı' : 'Completed',
+    paused: locale === 'tr' ? 'Duraklatıldı' : 'Paused',
+    viewProfile: locale === 'tr' ? 'Profil' : 'Profile',
+    newCampaign: locale === 'tr' ? 'Yeni Kampanya' : 'New Campaign',
+    proposalManagement: locale === 'tr' ? 'Teklif Yönetimi' : 'Proposal Management',
+    filterBy: locale === 'tr' ? 'Filtrele' : 'Filter by',
+    all: locale === 'tr' ? 'Tümü' : 'All',
+    pending: locale === 'tr' ? 'Beklemede' : 'Pending',
+    negotiating: locale === 'tr' ? 'Pazarlıkta' : 'Negotiating',
+    accepted: locale === 'tr' ? 'Kabul Edildi' : 'Accepted',
+    rejected: locale === 'tr' ? 'Reddedildi' : 'Rejected',
+    channel: locale === 'tr' ? 'Kanal' : 'Channel',
+    budget: locale === 'tr' ? 'Bütçe' : 'Budget',
+    status: locale === 'tr' ? 'Durum' : 'Status',
+    date: locale === 'tr' ? 'Tarih' : 'Date',
+    actions: locale === 'tr' ? 'İşlemler' : 'Actions',
+    viewDetails: locale === 'tr' ? 'Detaylar' : 'Details',
+    sendMessage: locale === 'tr' ? 'Mesaj Gönder' : 'Send Message',
+    discoverMore: locale === 'tr' ? 'Daha Fazla Keşfet' : 'Discover More',
+    goToDiscover: locale === 'tr' ? 'Keşfet Sayfasına Git' : 'Go to Discover',
+  }
 
   const filteredProposals = proposals.filter(p => 
     proposalFilter === "all" || p.status === proposalFilter

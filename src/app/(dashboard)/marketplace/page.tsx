@@ -57,6 +57,7 @@ import {
 import { cn } from "@/lib/utils"
 import { useSubscription } from "@/contexts/subscription-context"
 import { UpgradeModal } from "@/components/subscription/upgrade-modal"
+import { useLocale } from "@/hooks/use-locale"
 
 // Mock user credits
 const userCredits = 25

@@ -3,11 +3,13 @@
 import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { useTranslations } from "next-intl"
 import {
   Building2,
   ChevronLeft,
   ChevronRight,
   FileText,
+  Globe,
   Heart,
   LayoutDashboard,
   Palette,
@@ -40,6 +42,8 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
+import { LanguageSelector } from "@/components/language-selector"
+import { Button } from "@/components/ui/button"
 
 // Try to import subscription context (optional)
 let useSubscription: any = null
@@ -78,79 +82,79 @@ interface NavItem {
   children?: NavItem[]
 }
 
-// Navigation items configuration
-const navItems: NavItem[] = [
+// Navigation items configuration - labels are translation keys
+const getNavItems = (t: (key: string) => string): NavItem[] => [
   {
     href: "/",
-    label: "Dashboard",
+    label: t("dashboard"),
     icon: LayoutDashboard,
     roles: ["CREATOR", "SPONSOR", "ADMIN"],
   },
   // Creator specific items
   {
     href: "/campaigns/new",
-    label: "Kampanyalar",
+    label: t("campaigns"),
     icon: Target,
     roles: ["CREATOR"],
   },
   {
     href: "/media-kit",
-    label: "Media Kit",
+    label: t("mediaKit"),
     icon: Palette,
     roles: ["CREATOR"],
   },
   {
     href: "/reports",
-    label: "Raporlar",
+    label: t("reports"),
     icon: FileText,
     roles: ["CREATOR"],
   },
   // Sponsor specific items
   {
     href: "/sponsor",
-    label: "Portföyüm",
+    label: t("portfolio"),
     icon: Heart,
     roles: ["SPONSOR"],
   },
   // Common items - Discovery for both roles
   {
     href: "/sponsor/discover",
-    label: "Keşfet",
+    label: t("discover"),
     icon: Search,
     roles: ["CREATOR", "SPONSOR"], // Both can discover partners
   },
   {
     href: "/matches",
-    label: "Eşleşmeler",
+    label: t("matches"),
     icon: Sparkles,
     roles: ["CREATOR", "SPONSOR"],
   },
   {
     href: "/marketplace",
-    label: "Pazaryeri",
+    label: t("marketplace"),
     icon: ShoppingCart,
     roles: ["CREATOR", "SPONSOR"],
   },
   // Admin items
   {
     href: "/admin",
-    label: "Admin Panel",
+    label: t("admin"),
     icon: Shield,
     roles: ["ADMIN"],
   },
 ]
 
 // Bottom navigation items
-const bottomNavItems: NavItem[] = [
+const getBottomNavItems = (t: (key: string) => string): NavItem[] => [
   {
     href: "/settings",
-    label: "Ayarlar",
+    label: t("settings"),
     icon: Settings,
     roles: ["CREATOR", "SPONSOR", "ADMIN"],
   },
   {
     href: "/help",
-    label: "Yardım",
+    label: "Yardım", // Keep as is for now
     icon: HelpCircle,
     roles: ["CREATOR", "SPONSOR", "ADMIN"],
   },
@@ -163,8 +167,13 @@ export function Sidebar({
   notifications = {},
   user = { name: "Ahmet Yılmaz", email: "ahmet@devretain.com", plan: "PRO" }
 }: SidebarProps) {
+  const t = useTranslations("nav")
   const pathname = usePathname()
   const [isCollapsed, setIsCollapsed] = useState(collapsed)
+  
+  // Get translated nav items
+  const navItems = getNavItems(t)
+  const bottomNavItems = getBottomNavItems(t)
   
   // Get subscription context if available
   const subscription = useSubscription ? useSubscription() : null
@@ -363,7 +372,7 @@ export function Sidebar({
                 </Link>
               </TooltipTrigger>
               <TooltipContent side="right">
-                Çıkış Yap
+                {t("signOut")}
               </TooltipContent>
             </Tooltip>
           ) : (
@@ -372,8 +381,47 @@ export function Sidebar({
               className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
             >
               <LogOut className="h-5 w-5" />
-              <span>Çıkış Yap</span>
+              <span>{t("signOut")}</span>
             </Link>
+          )}
+        </div>
+
+        {/* Language Switcher */}
+        <div className={cn(
+          "p-3 border-t border-slate-200 dark:border-slate-800",
+          isCollapsed ? "flex justify-center" : ""
+        )}>
+          {isCollapsed ? (
+            <Tooltip delayDuration={0}>
+              <TooltipTrigger asChild>
+                <div>
+                  <LanguageSelector 
+                    showOnFirstVisit={false}
+                    trigger={
+                      <Button variant="ghost" size="icon" className="h-9 w-9">
+                        <Globe className="h-5 w-5 text-slate-500" />
+                      </Button>
+                    }
+                  />
+                </div>
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                Dil Değiştir / Change Language
+              </TooltipContent>
+            </Tooltip>
+          ) : (
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-slate-500">Dil / Language</span>
+              <LanguageSelector 
+                showOnFirstVisit={false}
+                trigger={
+                  <Button variant="ghost" size="sm" className="gap-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+                    <Globe className="h-4 w-4" />
+                    <span className="font-medium">TR / EN</span>
+                  </Button>
+                }
+              />
+            </div>
           )}
         </div>
 

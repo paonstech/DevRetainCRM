@@ -54,6 +54,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 import { Toaster } from "@/components/ui/toaster"
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/hooks/use-locale"
 
 /**
  * KATEGORİ BAZLI PERFORMANS PROFİLLERİ
@@ -828,11 +829,73 @@ const platformIcons = {
 
 export default function DiscoverPage() {
   const { toast } = useToast()
+  const { locale } = useLocale()
   const [activeTab, setActiveTab] = useState("creators") // "creators" or "sponsors"
   const [searchQuery, setSearchQuery] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState("Tümü")
+  const [selectedCategory, setSelectedCategory] = useState(locale === 'tr' ? "Tümü" : "All")
   const [sortBy, setSortBy] = useState("trustScore")
   const [filterOpen, setFilterOpen] = useState(false)
+  
+  // Localized texts
+  const t = {
+    discover: locale === 'tr' ? 'Keşfet' : 'Discover',
+    dashboard: locale === 'tr' ? 'Dashboard' : 'Dashboard',
+    creators: locale === 'tr' ? 'İçerik Üreticileri' : 'Content Creators',
+    sponsors: locale === 'tr' ? 'Sponsorlar & Markalar' : 'Sponsors & Brands',
+    searchCreators: locale === 'tr' ? 'İçerik üreticisi ara...' : 'Search creators...',
+    searchSponsors: locale === 'tr' ? 'Sponsor veya marka ara...' : 'Search sponsors or brands...',
+    all: locale === 'tr' ? 'Tümü' : 'All',
+    sortBy: locale === 'tr' ? 'Sırala' : 'Sort by',
+    trustScore: locale === 'tr' ? 'Güven Skoru' : 'Trust Score',
+    followers: locale === 'tr' ? 'Takipçi' : 'Followers',
+    roi: locale === 'tr' ? 'ROI' : 'ROI',
+    engagement: locale === 'tr' ? 'Etkileşim' : 'Engagement',
+    filters: locale === 'tr' ? 'Filtreler' : 'Filters',
+    advancedFilters: locale === 'tr' ? 'Gelişmiş Filtreler' : 'Advanced Filters',
+    partnerType: locale === 'tr' ? 'Partner Tipi' : 'Partner Type',
+    allTypes: locale === 'tr' ? 'Tüm Tipler' : 'All Types',
+    youtuber: locale === 'tr' ? 'YouTuber' : 'YouTuber',
+    streamer: locale === 'tr' ? 'Yayıncı' : 'Streamer',
+    influencer: locale === 'tr' ? 'Influencer' : 'Influencer',
+    club: locale === 'tr' ? 'Kulüp/Takım' : 'Club/Team',
+    minFollowers: locale === 'tr' ? 'Min. Takipçi' : 'Min. Followers',
+    maxFollowers: locale === 'tr' ? 'Max. Takipçi' : 'Max. Followers',
+    minROI: locale === 'tr' ? 'Min. ROI (%)' : 'Min. ROI (%)',
+    minTrust: locale === 'tr' ? 'Min. Güven Skoru' : 'Min. Trust Score',
+    verifiedOnly: locale === 'tr' ? 'Sadece Doğrulanmış' : 'Verified Only',
+    applyFilters: locale === 'tr' ? 'Filtreleri Uygula' : 'Apply Filters',
+    clearFilters: locale === 'tr' ? 'Temizle' : 'Clear',
+    featured: locale === 'tr' ? 'Öne Çıkanlar' : 'Featured',
+    allPartners: locale === 'tr' ? 'Tüm Partnerler' : 'All Partners',
+    allSponsors: locale === 'tr' ? 'Tüm Sponsorlar' : 'All Sponsors',
+    verified: locale === 'tr' ? 'Doğrulanmış' : 'Verified',
+    sendOffer: locale === 'tr' ? 'Teklif Gönder' : 'Send Offer',
+    apply: locale === 'tr' ? 'Başvur' : 'Apply',
+    viewProfile: locale === 'tr' ? 'Profil' : 'Profile',
+    campaigns: locale === 'tr' ? 'kampanya' : 'campaigns',
+    avgROI: locale === 'tr' ? 'Ort. ROI' : 'Avg. ROI',
+    avgROO: locale === 'tr' ? 'Ort. ROO' : 'Avg. ROO',
+    avgBudget: locale === 'tr' ? 'Ort. Bütçe' : 'Avg. Budget',
+    paymentSpeed: locale === 'tr' ? 'Ödeme Hızı' : 'Payment Speed',
+    collabScore: locale === 'tr' ? 'İşbirliği Skoru' : 'Collaboration Score',
+    preferredCategories: locale === 'tr' ? 'Tercih Ettiği Kategoriler' : 'Preferred Categories',
+    totalSponsored: locale === 'tr' ? 'Toplam Sponsorluk' : 'Total Sponsored',
+    missingInfo: locale === 'tr' ? 'Eksik Bilgi' : 'Missing Information',
+    fillAllFields: locale === 'tr' ? 'Lütfen tüm alanları doldurun.' : 'Please fill in all fields.',
+    writeMessage: locale === 'tr' ? 'Lütfen bir mesaj yazın.' : 'Please write a message.',
+    offerSent: locale === 'tr' ? 'Teklif Gönderildi! 🎉' : 'Offer Sent! 🎉',
+    offerSentDesc: locale === 'tr' ? 'için teklifiniz başarıyla iletildi.' : 'Your offer has been sent successfully.',
+    applicationSent: locale === 'tr' ? 'Başvuru Gönderildi! 🎉' : 'Application Sent! 🎉',
+    applicationSentDesc: locale === 'tr' ? 'için başvurunuz başarıyla iletildi.' : 'Your application has been sent successfully.',
+    addedToFavorites: locale === 'tr' ? 'Favorilere Eklendi' : 'Added to Favorites',
+    removedFromFavorites: locale === 'tr' ? 'Favorilerden Çıkarıldı' : 'Removed from Favorites',
+    budget: locale === 'tr' ? 'Bütçe' : 'Budget',
+    message: locale === 'tr' ? 'Mesaj' : 'Message',
+    sending: locale === 'tr' ? 'Gönderiliyor...' : 'Sending...',
+    cancel: locale === 'tr' ? 'İptal' : 'Cancel',
+    noResults: locale === 'tr' ? 'Sonuç bulunamadı' : 'No results found',
+    tryDifferentFilters: locale === 'tr' ? 'Farklı filtreler deneyin veya arama terimini değiştirin.' : 'Try different filters or change your search term.',
+  }
   
   // Filter states
   const [minFollowers, setMinFollowers] = useState("")
@@ -855,8 +918,8 @@ export default function DiscoverPage() {
   const handleSendOffer = async () => {
     if (selectedPartner && (!offerMessage || !offerBudget)) {
       toast({
-        title: "Eksik Bilgi",
-        description: "Lütfen tüm alanları doldurun.",
+        title: t.missingInfo,
+        description: t.fillAllFields,
         variant: "destructive",
       })
       return
@@ -864,8 +927,8 @@ export default function DiscoverPage() {
     
     if (selectedSponsor && !offerMessage) {
       toast({
-        title: "Eksik Bilgi",
-        description: "Lütfen bir mesaj yazın.",
+        title: t.missingInfo,
+        description: t.writeMessage,
         variant: "destructive",
       })
       return
@@ -878,14 +941,14 @@ export default function DiscoverPage() {
     
     if (selectedPartner) {
       toast({
-        title: "Teklif Gönderildi! 🎉",
-        description: `${selectedPartner.name} için teklifiniz başarıyla iletildi.`,
+        title: t.offerSent,
+        description: `${selectedPartner.name} ${t.offerSentDesc}`,
         variant: "success",
       })
     } else if (selectedSponsor) {
       toast({
-        title: "Başvuru Gönderildi! 🎉",
-        description: `${selectedSponsor.name} için başvurunuz başarıyla iletildi.`,
+        title: t.applicationSent,
+        description: `${selectedSponsor.name} ${t.applicationSentDesc}`,
         variant: "success",
       })
     }

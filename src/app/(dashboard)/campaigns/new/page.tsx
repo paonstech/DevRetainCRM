@@ -6,12 +6,14 @@ import Link from "next/link"
 import { CampaignForm } from "@/components/forms/campaign-form"
 import { Toaster } from "@/components/ui/toaster"
 import { Button } from "@/components/ui/button"
+import { useLocale } from "@/hooks/use-locale"
 
 export default function NewCampaignPage() {
   const router = useRouter()
+  const { locale } = useLocale()
 
   const handleSuccess = () => {
-    // Başarılı kayıt sonrası dashboard'a yönlendir
+    // Redirect to dashboard after successful save
     setTimeout(() => {
       router.push("/")
     }, 2000)
@@ -36,13 +38,17 @@ export default function NewCampaignPage() {
               <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                 DevRetain CRM
               </h1>
-              <p className="text-xs text-muted-foreground">Sponsorluk Yönetim Sistemi</p>
+              <p className="text-xs text-muted-foreground">
+                {locale === 'tr' ? 'Sponsorluk Yönetim Sistemi' : 'Sponsorship Management System'}
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-4">
             <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
               <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-sm font-medium text-emerald-600">Demo Modu</span>
+              <span className="text-sm font-medium text-emerald-600">
+                {locale === 'tr' ? 'Demo Modu' : 'Demo Mode'}
+              </span>
             </div>
           </div>
         </div>
@@ -55,7 +61,7 @@ export default function NewCampaignPage() {
           <Link href="/">
             <Button variant="ghost" className="gap-2">
               <ArrowLeft className="h-4 w-4" />
-              Dashboard'a Dön
+              {locale === 'tr' ? "Dashboard'a Dön" : 'Back to Dashboard'}
             </Button>
           </Link>
         </div>

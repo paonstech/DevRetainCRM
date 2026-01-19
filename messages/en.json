@@ -1,0 +1,563 @@
+{
+  "common": {
+    "appName": "DevRetain",
+    "tagline": "Data-Driven Sponsorship Management",
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "export": "Export",
+    "import": "Import",
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit",
+    "confirm": "Confirm",
+    "close": "Close",
+    "yes": "Yes",
+    "no": "No",
+    "all": "All",
+    "none": "None",
+    "select": "Select",
+    "required": "Required",
+    "optional": "Optional",
+    "new": "New",
+    "active": "Active",
+    "inactive": "Inactive",
+    "pending": "Pending",
+    "completed": "Completed",
+    "error": "Error",
+    "success": "Success",
+    "warning": "Warning",
+    "info": "Info"
+  },
+  "languageSelector": {
+    "title": "Select Language",
+    "subtitle": "Choose your preferred language",
+    "continue": "Continue",
+    "turkish": "Türkçe",
+    "english": "English"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "campaigns": "Campaigns",
+    "sponsors": "Sponsors",
+    "reports": "Reports",
+    "settings": "Settings",
+    "mediaKit": "Media Kit",
+    "discover": "Discover",
+    "matches": "Matches",
+    "marketplace": "Marketplace",
+    "admin": "Admin",
+    "portfolio": "Portfolio",
+    "notifications": "Notifications",
+    "signOut": "Sign Out",
+    "profile": "Profile"
+  },
+  "landing": {
+    "hero": {
+      "title": "Data-Driven Sponsorship Management",
+      "subtitle": "Optimize your sponsorship processes with ROI and ROO analytics. Make data-driven decisions, maximize your returns.",
+      "cta": {
+        "start": "Start Free",
+        "demo": "Watch Demo"
+      }
+    },
+    "socialProof": {
+      "title": "Trusted by Leading Communities"
+    },
+    "features": {
+      "title": "Why DevRetain?",
+      "subtitle": "Discover the future of sponsorship management",
+      "roi": {
+        "title": "ROI Tracking",
+        "description": "Monitor the financial performance of every campaign with real-time return on investment analysis."
+      },
+      "roo": {
+        "title": "ROO Management",
+        "description": "Measure your strategic goals. Track brand awareness, engagement, and conversion objectives."
+      },
+      "crm": {
+        "title": "Sponsor CRM",
+        "description": "Manage all your sponsor relationships on one platform. Identify valuable sponsors with RFM analysis."
+      },
+      "reports": {
+        "title": "Automated Reporting",
+        "description": "Impress your sponsors with professional PDF reports featuring compelling data."
+      }
+    },
+    "howItWorks": {
+      "title": "How It Works",
+      "step1": {
+        "title": "Create Account",
+        "description": "Create your free account and explore the platform."
+      },
+      "step2": {
+        "title": "Connect Sponsors",
+        "description": "Add your existing sponsors or discover new ones."
+      },
+      "step3": {
+        "title": "Analyze",
+        "description": "Analyze your data and make smart decisions."
+      }
+    },
+    "pricing": {
+      "title": "Plans",
+      "subtitle": "Choose the plan that fits your needs",
+      "free": "Free",
+      "pro": "Professional",
+      "enterprise": "Enterprise",
+      "perMonth": "/month",
+      "perYear": "/year",
+      "annual": "Annual",
+      "monthly": "Monthly",
+      "discount": "20% off"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome",
+    "overview": "Overview",
+    "metrics": {
+      "totalRevenue": "Total Revenue",
+      "netROI": "Net ROI",
+      "overallROO": "Overall ROO Score",
+      "activeCampaigns": "Active Campaigns",
+      "vsLastMonth": "vs last month"
+    },
+    "tabs": {
+      "financial": "Financial Performance (ROI)",
+      "strategic": "Strategic Goals (ROO)"
+    },
+    "charts": {
+      "revenueVsExpense": "Revenue vs Expense Trend",
+      "roiTrend": "ROI Trend",
+      "sponsorDistribution": "Sponsor Distribution",
+      "rooProgress": "ROO Progress",
+      "campaignPerformance": "Campaign Performance Matrix"
+    },
+    "tables": {
+      "recentNegotiations": "Recent Sponsorship Negotiations",
+      "attentionRequired": "Campaigns Requiring Attention"
+    },
+    "filters": {
+      "dateRange": "Date Range",
+      "sponsorType": "Sponsor Type",
+      "lastWeek": "Last 7 Days",
+      "lastMonth": "Last 30 Days",
+      "lastQuarter": "Last 3 Months",
+      "lastYear": "Last Year",
+      "custom": "Custom"
+    }
+  },
+  "campaigns": {
+    "title": "Campaigns",
+    "new": "New Campaign",
+    "edit": "Edit Campaign",
+    "form": {
+      "name": "Campaign Name",
+      "sponsor": "Select Sponsor",
+      "budget": "Total Budget",
+      "targetROI": "Target ROI (%)",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "description": "Description",
+      "objectives": "Objectives"
+    },
+    "status": {
+      "draft": "Draft",
+      "pending": "Pending Approval",
+      "active": "Active",
+      "paused": "Paused",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    },
+    "metrics": {
+      "impressions": "Impressions",
+      "clicks": "Clicks",
+      "conversions": "Conversions",
+      "ctr": "CTR",
+      "cpc": "CPC",
+      "cpa": "CPA"
+    }
+  },
+  "sponsors": {
+    "title": "Sponsors",
+    "new": "New Sponsor",
+    "tier": {
+      "bronze": "Bronze",
+      "silver": "Silver",
+      "gold": "Gold",
+      "platinum": "Platinum",
+      "diamond": "Diamond"
+    },
+    "rfm": {
+      "title": "RFM Analysis",
+      "recency": "Recency",
+      "frequency": "Frequency",
+      "monetary": "Monetary",
+      "score": "RFM Score",
+      "segment": "Segment"
+    },
+    "segments": {
+      "champions": "Champions",
+      "loyalCustomers": "Loyal Customers",
+      "potentialLoyalists": "Potential Loyalists",
+      "recentCustomers": "Recent Customers",
+      "promising": "Promising",
+      "needsAttention": "Needs Attention",
+      "aboutToSleep": "About to Sleep",
+      "atRisk": "At Risk",
+      "cantLoseThem": "Can't Lose Them",
+      "hibernating": "Hibernating",
+      "lost": "Lost"
+    }
+  },
+  "reports": {
+    "title": "Reports",
+    "generate": "Generate Report",
+    "export": "Download PDF",
+    "dateRange": "Date Range",
+    "generatedAt": "Generated At",
+    "reportPeriod": "Report Period",
+    "sections": {
+      "summary": "Summary",
+      "performance": "Performance",
+      "rfmAnalysis": "RFM Analysis",
+      "ltvPrediction": "LTV Predictions",
+      "rooResults": "ROO Results",
+      "executiveSummary": "Executive Summary",
+      "qualitativeGains": "Qualitative Gains",
+      "financialPerformance": "Financial Performance",
+      "strategicGoals": "Strategic Goal Performance (ROO)",
+      "campaignDistribution": "Campaign Performance Distribution",
+      "highlights": "Key Qualitative Achievements",
+      "conclusion": "Conclusion and Recommendations"
+    },
+    "pdf": {
+      "title": "Sponsorship Performance Report",
+      "subtitle": "Detailed Analysis and Recommendations",
+      "confidential": "CONFIDENTIAL - Authorized Personnel Only",
+      "page": "Page",
+      "of": "of",
+      "generatedBy": "Generated by DevRetain CRM"
+    },
+    "metrics": {
+      "totalRevenue": "Total Revenue",
+      "totalExpenses": "Total Expenses",
+      "netProfit": "Net Profit",
+      "profitMargin": "Profit Margin",
+      "avgROI": "Average ROI",
+      "avgROO": "Average ROO",
+      "activeCampaigns": "Active Campaigns",
+      "completedCampaigns": "Completed Campaigns",
+      "totalSponsors": "Total Sponsors",
+      "activeSponsors": "Active Sponsors",
+      "retentionRate": "Sponsor Retention Rate"
+    },
+    "objectives": {
+      "total": "Total Objectives",
+      "completed": "Completed",
+      "exceeded": "Exceeded",
+      "onTrack": "On Track",
+      "atRisk": "At Risk",
+      "behind": "Behind"
+    },
+    "performance": {
+      "excellent": "Excellent",
+      "good": "Good",
+      "average": "Average",
+      "low": "Low",
+      "critical": "Critical"
+    },
+    "qualitative": {
+      "exceeded": "{type} Goal Exceeded!",
+      "exceededDesc": "{name} goal reached {rate}% of target. Goal exceeded by {overRate}%.",
+      "completed": "{type} Goal Completed",
+      "completedDesc": "{name} goal successfully completed.",
+      "onTrack": "{type} Progressing Well",
+      "onTrackDesc": "{name} goal is {rate}% complete and on track.",
+      "atRisk": "{type} Needs Attention",
+      "atRiskDesc": "{name} goal is falling behind. Currently {rate}% complete.",
+      "milestone": "Goals Exceeded",
+      "milestoneDesc": "{count} goals in this campaign exceeded their targets.",
+      "allCompleted": "All Goals Completed",
+      "allCompletedDesc": "All {count} goals in the campaign have been successfully achieved."
+    },
+    "summary": {
+      "intro": "ROO (Return on Objectives) analysis for \"{campaign}\" campaign has been completed.",
+      "performanceRating": "The campaign's overall performance is rated as \"{rating}\" with an ROO score of {score}.",
+      "rawScore": "(raw score: {score})",
+      "objectiveSummary": "The campaign has {total} defined objectives. {completed} have been completed or exceeded, {onTrack} are on track, and {atRisk} require attention.",
+      "keyAchievements": "Key Achievements",
+      "areasOfConcern": "Areas of Concern",
+      "recommendations": "Recommendations"
+    },
+    "recommendations": {
+      "strategyRevision": "{count} objectives are at risk. Strategy revision is recommended for these objectives.",
+      "engagementStrategy": "Review content strategy for {type} and plan engagement-focused campaigns.",
+      "ctaOptimization": "Strengthen call-to-action (CTA) messages for {type} and optimize redirect links.",
+      "salesFunnel": "Analyze the sales funnel for {type} and implement improvements to increase conversion rate.",
+      "applySuccess": "Apply successful strategies from exceeded goals to other objectives.",
+      "brandValue": "Financial performance is good but strategic goals are behind. Increase brand value-focused activities.",
+      "monetization": "Strategic goals are successful but financial returns are low. Review monetization strategies."
+    },
+    "orgSummary": {
+      "title": "{org} - Sponsorship Performance Summary",
+      "intro": "This report provides a comprehensive analysis of sponsorship activities during the specified period.",
+      "financialSummary": "During the period, total revenue of {revenue} was generated with {expenses} in expenses. Net profit is {profit} with a profit margin of {margin}%. Average ROI is {roi}%.",
+      "rooSummary": "A total of {objectives} strategic objectives were defined across {campaigns} campaigns. Average ROO score is {score}.",
+      "objectiveStats": "{completed} objectives successfully completed or exceeded | {exceeded} objectives exceeded their targets | {atRisk} objectives require attention",
+      "campaignStats": "{excellent} campaigns showed excellent performance (ROO ≥90) | {good} campaigns showed good performance (ROO 75-90) | {atRisk} campaigns need improvement (ROO <50)",
+      "conclusionGood": "Sponsorship activities have demonstrated successful performance in both financial and strategic goals. Continuation of current strategies and application of successful campaign models to other projects is recommended.",
+      "conclusionFinancialGood": "While financial performance is satisfactory, there are areas for improvement in strategic goals. Increasing brand awareness and engagement-focused activities is recommended.",
+      "conclusionRooGood": "Strategic goals are being successfully achieved, but financial returns are below expectations. Review of monetization strategies and re-evaluation of sponsorship packages is recommended.",
+      "conclusionNeedsWork": "Areas for improvement have been identified in both financial and strategic performance. A comprehensive strategy revision and goal-budget optimization is recommended.",
+      "urgentAction": "Urgent Action: {count} campaigns are showing critical performance and require priority intervention."
+    },
+    "objectiveTypes": {
+      "AWARENESS": "Brand Awareness",
+      "REACH": "Reach",
+      "ENGAGEMENT": "Engagement",
+      "VIDEO_VIEWS": "Video Views",
+      "WEBSITE_TRAFFIC": "Website Traffic",
+      "LEAD_GENERATION": "Lead Generation",
+      "APP_DOWNLOAD": "App Downloads",
+      "SALES": "Sales",
+      "SIGN_UP": "Sign Ups",
+      "BRAND_SENTIMENT": "Brand Sentiment",
+      "SOCIAL_FOLLOWERS": "Social Media Followers",
+      "EMAIL_SUBSCRIBERS": "Email Subscribers",
+      "CONTENT_CREATION": "Content Creation",
+      "EVENT_ATTENDANCE": "Event Attendance",
+      "CUSTOM": "Custom Goal"
+    },
+    "objectiveStatus": {
+      "NOT_STARTED": "Not Started",
+      "IN_PROGRESS": "In Progress",
+      "ON_TRACK": "On Track",
+      "AT_RISK": "At Risk",
+      "BEHIND": "Behind",
+      "COMPLETED": "Completed",
+      "EXCEEDED": "Exceeded"
+    }
+  },
+  "discover": {
+    "title": "Discover",
+    "tabs": {
+      "creators": "Content Creators",
+      "sponsors": "Sponsors & Brands"
+    },
+    "filters": {
+      "category": "Category",
+      "followers": "Followers",
+      "minROI": "Minimum ROI",
+      "trustScore": "Trust Score",
+      "verified": "Verified Only",
+      "partnerType": "Partner Type"
+    },
+    "sort": {
+      "trustScore": "Trust Score",
+      "followers": "Followers",
+      "roi": "Average ROI",
+      "engagement": "Engagement Rate",
+      "budget": "Average Budget",
+      "deals": "Completed Deals"
+    },
+    "card": {
+      "followers": "Followers",
+      "avgROI": "Avg ROI",
+      "avgROO": "Avg ROO",
+      "trustScore": "Trust",
+      "campaigns": "Campaigns",
+      "engagement": "Engagement",
+      "sendOffer": "Send Offer",
+      "contact": "Contact",
+      "viewProfile": "Profile",
+      "featured": "Featured"
+    },
+    "sponsor": {
+      "avgBudget": "Avg Budget",
+      "paymentSpeed": "Payment Speed",
+      "collaboration": "Collaboration"
+    }
+  },
+  "matches": {
+    "title": "Matches",
+    "tabs": {
+      "recommendations": "Recommendations",
+      "notifications": "Notifications"
+    },
+    "matchScore": "Match Score",
+    "potentialROI": "Potential ROI",
+    "potentialROO": "Potential ROO",
+    "confidence": {
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    },
+    "actions": {
+      "contact": "Contact",
+      "viewProfile": "Profile",
+      "favorite": "Add to Favorites",
+      "dismiss": "Dismiss"
+    },
+    "reasons": {
+      "audience": "Audience Match",
+      "performance": "Performance",
+      "budget": "Budget",
+      "category": "Category"
+    }
+  },
+  "marketplace": {
+    "title": "Report Marketplace",
+    "tabs": {
+      "publishers": "Publisher Reports",
+      "sponsors": "Sponsor Report Cards"
+    },
+    "report": {
+      "verified": "Verified",
+      "preview": "Preview",
+      "buy": "Buy",
+      "viewWithSubscription": "View with Subscription",
+      "credits": "credits",
+      "oneTimePurchase": "One-time Purchase"
+    }
+  },
+  "mediaKit": {
+    "title": "Media Kit Builder",
+    "tabs": {
+      "profile": "Profile",
+      "files": "Files",
+      "stats": "Statistics",
+      "pricing": "Pricing"
+    },
+    "profile": {
+      "channelName": "Channel / Club Name",
+      "tagline": "Tagline",
+      "description": "Description",
+      "category": "Category",
+      "location": "Location"
+    },
+    "files": {
+      "upload": "Upload File",
+      "dragDrop": "Drag and drop files here",
+      "supported": "PDF, PPTX, XLSX, PNG, JPG supported",
+      "public": "Public",
+      "private": "Private"
+    },
+    "stats": {
+      "totalFollowers": "Total Followers",
+      "avgViews": "Average Views",
+      "avgROI": "Average ROI",
+      "avgROO": "Average ROO",
+      "completedCampaigns": "Completed Campaigns"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "tabs": {
+      "profile": "Profile",
+      "organization": "Organization",
+      "subscription": "Subscription",
+      "notifications": "Notifications",
+      "privacy": "Data Privacy"
+    },
+    "profile": {
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "avatar": "Profile Picture",
+      "timezone": "Timezone",
+      "language": "Language"
+    },
+    "organization": {
+      "name": "Company Name",
+      "type": "Organization Type",
+      "taxId": "Tax ID",
+      "taxOffice": "Tax Office",
+      "address": "Address",
+      "members": "Team Members",
+      "addMember": "Add Member"
+    },
+    "subscription": {
+      "currentPlan": "Current Plan",
+      "manage": "Manage Subscription",
+      "invoices": "Invoice History",
+      "upgrade": "Upgrade Plan"
+    },
+    "notifications": {
+      "email": "Email Notifications",
+      "roiAlerts": "ROI Target Alerts",
+      "campaignExpiry": "Campaign Expiry Alerts",
+      "newOffers": "New Offer Notifications"
+    },
+    "privacy": {
+      "shareData": "Share My Data to Report Marketplace",
+      "anonymous": "Anonymous Sharing",
+      "openProfile": "Open Profile"
+    }
+  },
+  "admin": {
+    "title": "Admin Panel",
+    "tabs": {
+      "overview": "System Overview",
+      "users": "User Management",
+      "sponsors": "Sponsorship Pool",
+      "logs": "System Activities"
+    },
+    "stats": {
+      "totalUsers": "Total Users",
+      "mrr": "Monthly Recurring Revenue",
+      "arr": "Annual Recurring Revenue",
+      "activeSubscriptions": "Active Subscriptions"
+    },
+    "users": {
+      "search": "Search Users",
+      "suspend": "Suspend",
+      "activate": "Activate",
+      "changeRole": "Change Role"
+    }
+  },
+  "auth": {
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "signOut": "Sign Out",
+    "forgotPassword": "Forgot Password",
+    "resetPassword": "Reset Password",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "rememberMe": "Remember Me",
+    "orContinueWith": "or continue with",
+    "google": "Sign in with Google",
+    "magicLink": "Send Magic Link"
+  },
+  "errors": {
+    "required": "This field is required",
+    "invalidEmail": "Please enter a valid email address",
+    "minLength": "Must be at least {min} characters",
+    "maxLength": "Must be at most {max} characters",
+    "generic": "An error occurred",
+    "notFound": "Page not found",
+    "unauthorized": "Unauthorized access",
+    "forbidden": "Access denied"
+  },
+  "toast": {
+    "saved": "Saved!",
+    "deleted": "Deleted!",
+    "copied": "Copied!",
+    "sent": "Sent!",
+    "updated": "Updated!",
+    "error": "An error occurred"
+  },
+  "format": {
+    "currency": "${value}",
+    "percentage": "{value}%",
+    "number": "{value}"
+  }
+}

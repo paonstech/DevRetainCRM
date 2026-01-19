@@ -25,57 +25,63 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import {
-  type ReportData,
-  formatCurrency,
-  formatNumber,
-  formatDate,
-  formatPercent,
-} from "@/lib/report-generator"
+import { type ReportData } from "@/lib/report-generator"
+import { 
+  formatLocalizedCurrency,
+  formatLocalizedNumber,
+  formatLocalizedDate,
+  formatLocalizedPercent,
+  getObjectiveTypeLabel,
+  getObjectiveStatusLabel,
+  getPerformanceLabel,
+} from "@/lib/localized-report-generator"
+import { type Locale } from "@/i18n/config"
 
 interface ReportPreviewProps {
   data: ReportData
+  locale?: Locale
 }
 
-const STATUS_LABELS: Record<string, string> = {
-  DRAFT: "Taslak",
-  PENDING_APPROVAL: "Onay Bekliyor",
-  ACTIVE: "Aktif",
-  PAUSED: "Duraklatıldı",
-  COMPLETED: "Tamamlandı",
-  CANCELLED: "İptal Edildi",
-}
+// Localized labels
+const getStatusLabels = (locale: Locale): Record<string, string> => ({
+  DRAFT: locale === 'tr' ? "Taslak" : "Draft",
+  PENDING_APPROVAL: locale === 'tr' ? "Onay Bekliyor" : "Pending Approval",
+  ACTIVE: locale === 'tr' ? "Aktif" : "Active",
+  PAUSED: locale === 'tr' ? "Duraklatıldı" : "Paused",
+  COMPLETED: locale === 'tr' ? "Tamamlandı" : "Completed",
+  CANCELLED: locale === 'tr' ? "İptal Edildi" : "Cancelled",
+})
 
-const TYPE_LABELS: Record<string, string> = {
-  BRAND_AWARENESS: "Marka Bilinirliği",
-  PRODUCT_LAUNCH: "Ürün Lansmanı",
-  EVENT_SPONSORSHIP: "Etkinlik",
-  CONTENT_SPONSORSHIP: "İçerik",
+const getTypeLabels = (locale: Locale): Record<string, string> => ({
+  BRAND_AWARENESS: locale === 'tr' ? "Marka Bilinirliği" : "Brand Awareness",
+  PRODUCT_LAUNCH: locale === 'tr' ? "Ürün Lansmanı" : "Product Launch",
+  EVENT_SPONSORSHIP: locale === 'tr' ? "Etkinlik" : "Event",
+  CONTENT_SPONSORSHIP: locale === 'tr' ? "İçerik" : "Content",
   AFFILIATE: "Affiliate",
   INFLUENCER: "Influencer",
-}
+})
 
-const TIER_LABELS: Record<string, string> = {
+const getTierLabels = (locale: Locale): Record<string, string> => ({
   DIAMOND: "Diamond",
   PLATINUM: "Platinum",
   GOLD: "Gold",
   SILVER: "Silver",
   BRONZE: "Bronze",
-}
+})
 
-const RFM_LABELS: Record<string, string> = {
-  CHAMPIONS: "Şampiyonlar",
-  LOYAL_CUSTOMERS: "Sadık Müşteriler",
-  POTENTIAL_LOYALIST: "Potansiyel Sadıklar",
-  NEW_CUSTOMERS: "Yeni Müşteriler",
-  PROMISING: "Umut Vaat Edenler",
-  NEED_ATTENTION: "İlgi Gerektirenler",
-  ABOUT_TO_SLEEP: "Uykuya Dalanlar",
-  AT_RISK: "Risk Altındakiler",
-  CANT_LOSE_THEM: "Kaybetmemeliyiz",
-  HIBERNATING: "Kış Uykusundakiler",
-  LOST: "Kayıp Müşteriler",
-}
+const getRfmLabels = (locale: Locale): Record<string, string> => ({
+  CHAMPIONS: locale === 'tr' ? "Şampiyonlar" : "Champions",
+  LOYAL_CUSTOMERS: locale === 'tr' ? "Sadık Müşteriler" : "Loyal Customers",
+  POTENTIAL_LOYALIST: locale === 'tr' ? "Potansiyel Sadıklar" : "Potential Loyalists",
+  NEW_CUSTOMERS: locale === 'tr' ? "Yeni Müşteriler" : "New Customers",
+  PROMISING: locale === 'tr' ? "Umut Vaat Edenler" : "Promising",
+  NEED_ATTENTION: locale === 'tr' ? "İlgi Gerektirenler" : "Needs Attention",
+  ABOUT_TO_SLEEP: locale === 'tr' ? "Uykuya Dalanlar" : "About to Sleep",
+  AT_RISK: locale === 'tr' ? "Risk Altındakiler" : "At Risk",
+  CANT_LOSE_THEM: locale === 'tr' ? "Kaybetmemeliyiz" : "Can't Lose Them",
+  HIBERNATING: locale === 'tr' ? "Kış Uykusundakiler" : "Hibernating",
+  LOST: locale === 'tr' ? "Kayıp Müşteriler" : "Lost",
+})
 
 const PERFORMANCE_COLORS: Record<string, string> = {
   EXCELLENT: "bg-emerald-100 text-emerald-800 border-emerald-300",
@@ -93,7 +99,77 @@ const GAIN_TYPE_STYLES: Record<string, { bg: string; border: string; text: strin
   risk: { bg: "bg-red-50", border: "border-red-200", text: "text-red-700" },
 }
 
-export function ReportPreview({ data }: ReportPreviewProps) {
+export function ReportPreview({ data, locale = 'tr' }: ReportPreviewProps) {
+  // Get localized labels
+  const STATUS_LABELS = getStatusLabels(locale)
+  const TYPE_LABELS = getTypeLabels(locale)
+  const TIER_LABELS = getTierLabels(locale)
+  const RFM_LABELS = getRfmLabels(locale)
+  
+  // Localized formatting functions
+  const formatCurrency = (value: number) => formatLocalizedCurrency(value, locale)
+  const formatNumber = (value: number) => formatLocalizedNumber(value, locale)
+  const formatDate = (date: Date) => formatLocalizedDate(date, locale)
+  const formatPercent = (value: number) => formatLocalizedPercent(value, locale)
+  
+  // Localized text
+  const t = {
+    reportTitle: locale === 'tr' ? 'Sponsorluk Performans Raporu' : 'Sponsorship Performance Report',
+    reportDate: locale === 'tr' ? 'Rapor Tarihi' : 'Report Date',
+    period: locale === 'tr' ? 'Dönem' : 'Period',
+    executiveSummary: locale === 'tr' ? 'Yönetici Özeti' : 'Executive Summary',
+    totalRevenue: locale === 'tr' ? 'Toplam Gelir' : 'Total Revenue',
+    totalExpenses: locale === 'tr' ? 'Toplam Gider' : 'Total Expenses',
+    netProfit: locale === 'tr' ? 'Net Kar' : 'Net Profit',
+    avgROI: locale === 'tr' ? 'Ortalama ROI' : 'Average ROI',
+    avgROO: locale === 'tr' ? 'Ortalama ROO' : 'Average ROO',
+    bestPerformance: locale === 'tr' ? 'En İyi Performans' : 'Best Performance',
+    highestROI: locale === 'tr' ? 'En Yüksek ROI' : 'Highest ROI',
+    highestROO: locale === 'tr' ? 'En Yüksek ROO' : 'Highest ROO',
+    topSponsor: locale === 'tr' ? 'En Değerli Sponsor' : 'Top Sponsor',
+    conversions: locale === 'tr' ? 'dönüşüm' : 'conversions',
+    detailedSummary: locale === 'tr' ? 'Detaylı Yönetici Özeti' : 'Detailed Executive Summary',
+    monthlyTrend: locale === 'tr' ? 'Aylık Performans Trendi' : 'Monthly Performance Trend',
+    month: locale === 'tr' ? 'Ay' : 'Month',
+    revenue: locale === 'tr' ? 'Gelir' : 'Revenue',
+    expenses: locale === 'tr' ? 'Gider' : 'Expenses',
+    net: locale === 'tr' ? 'Net' : 'Net',
+    profitMargin: locale === 'tr' ? 'Kar Marjı' : 'Profit Margin',
+    campaignPerformance: locale === 'tr' ? 'Kampanya Performansları' : 'Campaign Performance',
+    campaign: locale === 'tr' ? 'Kampanya' : 'Campaign',
+    status: locale === 'tr' ? 'Durum' : 'Status',
+    type: locale === 'tr' ? 'Tür' : 'Type',
+    budget: locale === 'tr' ? 'Bütçe' : 'Budget',
+    impressions: locale === 'tr' ? 'Gösterim' : 'Impressions',
+    clicks: locale === 'tr' ? 'Tıklama' : 'Clicks',
+    conversion: locale === 'tr' ? 'Dönüşüm' : 'Conversion',
+    qualitativeGains: locale === 'tr' ? 'Niteliksel Kazanımlar (ROO Analizi)' : 'Qualitative Gains (ROO Analysis)',
+    avgRooScore: locale === 'tr' ? 'Ort. ROO Skoru' : 'Avg ROO Score',
+    totalObjectives: locale === 'tr' ? 'Toplam Hedef' : 'Total Objectives',
+    completed: locale === 'tr' ? 'Tamamlanan' : 'Completed',
+    exceeded: locale === 'tr' ? 'Hedef Aşan' : 'Exceeded',
+    atRisk: locale === 'tr' ? 'Risk Altında' : 'At Risk',
+    strategicGoalPerformance: locale === 'tr' ? 'Stratejik Hedef Performansı' : 'Strategic Goal Performance',
+    rooScore: locale === 'tr' ? 'ROO Skoru' : 'ROO Score',
+    keyAchievements: locale === 'tr' ? 'Öne Çıkan Kazanımlar' : 'Key Achievements',
+    objectiveDetails: locale === 'tr' ? 'Hedef Detayları' : 'Objective Details',
+    objective: locale === 'tr' ? 'Hedef' : 'Objective',
+    target: locale === 'tr' ? 'Hedef' : 'Target',
+    actual: locale === 'tr' ? 'Gerçekleşen' : 'Actual',
+    achievement: locale === 'tr' ? 'Başarı' : 'Achievement',
+    rfmSegmentation: locale === 'tr' ? 'RFM Segmentasyonu' : 'RFM Segmentation',
+    sponsorAnalysis: locale === 'tr' ? 'Sponsor Analizi ve LTV Tahminleri' : 'Sponsor Analysis & LTV Predictions',
+    sponsor: locale === 'tr' ? 'Sponsor' : 'Sponsor',
+    tier: locale === 'tr' ? 'Tier' : 'Tier',
+    rfmSegment: locale === 'tr' ? 'RFM Segment' : 'RFM Segment',
+    totalValue: locale === 'tr' ? 'Toplam Değer' : 'Total Value',
+    estimatedLTV: locale === 'tr' ? 'Tahmini LTV' : 'Estimated LTV',
+    churnRisk: locale === 'tr' ? 'Churn Riski' : 'Churn Risk',
+    footerGenerated: locale === 'tr' ? 'Bu rapor DevRetain CRM tarafından otomatik olarak oluşturulmuştur.' : 'This report was automatically generated by DevRetain CRM.',
+    footerCreated: locale === 'tr' ? 'Oluşturulma' : 'Created',
+    managementSystem: locale === 'tr' ? 'Sponsorluk Yönetim Sistemi' : 'Sponsorship Management System',
+  }
+
   return (
     <div id="report-content" className="bg-white p-8 space-y-8 min-w-[800px]">
       {/* Header */}
@@ -101,7 +177,7 @@ export function ReportPreview({ data }: ReportPreviewProps) {
         <div className="flex items-start justify-between">
           <div>
             <h1 className="text-3xl font-bold text-slate-900">
-              Sponsorluk Performans Raporu
+              {t.reportTitle}
             </h1>
             <p className="text-lg text-slate-600 mt-1">
               {data.organizationName}
@@ -118,10 +194,10 @@ export function ReportPreview({ data }: ReportPreviewProps) {
         </div>
         <div className="flex items-center gap-6 mt-4 text-sm text-slate-500">
           <span>
-            <strong>Rapor Tarihi:</strong> {formatDate(data.generatedAt)}
+            <strong>{t.reportDate}:</strong> {formatDate(data.generatedAt)}
           </span>
           <span>
-            <strong>Dönem:</strong> {formatDate(data.dateRange.startDate)} - {formatDate(data.dateRange.endDate)}
+            <strong>{t.period}:</strong> {formatDate(data.dateRange.startDate)} - {formatDate(data.dateRange.endDate)}
           </span>
         </div>
       </div>
@@ -130,14 +206,14 @@ export function ReportPreview({ data }: ReportPreviewProps) {
       <section>
         <h2 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
           <Award className="h-5 w-5 text-amber-500" />
-          Yönetici Özeti
+          {t.executiveSummary}
         </h2>
         <div className="grid grid-cols-5 gap-4">
           <Card className="bg-gradient-to-br from-emerald-50 to-emerald-100 border-emerald-200">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-emerald-700">Toplam Gelir</p>
+                  <p className="text-sm text-emerald-700">{t.totalRevenue}</p>
                   <p className="text-2xl font-bold text-emerald-900">
                     {formatCurrency(data.highlights.totalRevenue)}
                   </p>
@@ -151,7 +227,7 @@ export function ReportPreview({ data }: ReportPreviewProps) {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-red-700">Toplam Gider</p>
+                  <p className="text-sm text-red-700">{t.totalExpenses}</p>
                   <p className="text-2xl font-bold text-red-900">
                     {formatCurrency(data.highlights.totalExpenses)}
                   </p>
@@ -165,7 +241,7 @@ export function ReportPreview({ data }: ReportPreviewProps) {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-blue-700">Net Kar</p>
+                  <p className="text-sm text-blue-700">{t.netProfit}</p>
                   <p className="text-2xl font-bold text-blue-900">
                     {formatCurrency(data.highlights.netProfit)}
                   </p>
@@ -179,7 +255,7 @@ export function ReportPreview({ data }: ReportPreviewProps) {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-violet-700">Ortalama ROI</p>
+                  <p className="text-sm text-violet-700">{t.avgROI}</p>
                   <p className="text-2xl font-bold text-violet-900">
                     {formatPercent(data.highlights.averageROI)}
                   </p>
@@ -193,7 +269,7 @@ export function ReportPreview({ data }: ReportPreviewProps) {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-indigo-700">Ortalama ROO</p>
+                  <p className="text-sm text-indigo-700">{t.avgROO}</p>
                   <p className="text-2xl font-bold text-indigo-900">
                     {data.highlights.averageROO?.toFixed(1) || "—"}
                   </p>
@@ -209,10 +285,10 @@ export function ReportPreview({ data }: ReportPreviewProps) {
           {data.highlights.bestPerformingCampaign && (
             <Card>
               <CardContent className="p-4">
-                <p className="text-xs text-muted-foreground uppercase tracking-wide">En İyi Performans</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wide">{t.bestPerformance}</p>
                 <p className="font-semibold mt-1">{data.highlights.bestPerformingCampaign.name}</p>
                 <p className="text-sm text-muted-foreground">
-                  {formatNumber(data.highlights.bestPerformingCampaign.conversions)} dönüşüm
+                  {formatNumber(data.highlights.bestPerformingCampaign.conversions)} {t.conversions}
                 </p>
               </CardContent>
             </Card>
@@ -221,7 +297,7 @@ export function ReportPreview({ data }: ReportPreviewProps) {
           {data.highlights.highestROICampaign && (
             <Card>
               <CardContent className="p-4">
-                <p className="text-xs text-muted-foreground uppercase tracking-wide">En Yüksek ROI</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wide">{t.highestROI}</p>
                 <p className="font-semibold mt-1">{data.highlights.highestROICampaign.name}</p>
                 <p className="text-sm text-emerald-600">
                   {formatPercent(data.highlights.highestROICampaign.roi)} ROI
@@ -233,7 +309,7 @@ export function ReportPreview({ data }: ReportPreviewProps) {
           {data.highlights.highestROOCampaign && (
             <Card>
               <CardContent className="p-4">
-                <p className="text-xs text-muted-foreground uppercase tracking-wide">En Yüksek ROO</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wide">{t.highestROO}</p>
                 <p className="font-semibold mt-1">{data.highlights.highestROOCampaign.name}</p>
                 <p className="text-sm text-indigo-600">
                   {data.highlights.highestROOCampaign.rooScore.toFixed(1)} ROO
@@ -245,7 +321,7 @@ export function ReportPreview({ data }: ReportPreviewProps) {
           {data.highlights.topSponsor && (
             <Card>
               <CardContent className="p-4">
-                <p className="text-xs text-muted-foreground uppercase tracking-wide">En Değerli Sponsor</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wide">{t.topSponsor}</p>
                 <p className="font-semibold mt-1">{data.highlights.topSponsor.companyName}</p>
                 <p className="text-sm text-muted-foreground">
                   {formatCurrency(data.highlights.topSponsor.totalValue)}
@@ -261,7 +337,7 @@ export function ReportPreview({ data }: ReportPreviewProps) {
             <CardContent className="p-4">
               <h3 className="text-sm font-semibold text-slate-700 mb-3 flex items-center gap-2">
                 <FileText className="h-4 w-4 text-slate-500" />
-                Detaylı Yönetici Özeti
+                {t.detailedSummary}
               </h3>
               <div className="prose prose-sm prose-slate max-w-none">
                 {data.executiveSummary.split('\n\n').map((paragraph, index) => {
@@ -325,18 +401,18 @@ export function ReportPreview({ data }: ReportPreviewProps) {
       <section>
         <h2 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
           <BarChart3 className="h-5 w-5 text-blue-500" />
-          Aylık Performans Trendi
+          {t.monthlyTrend}
         </h2>
         <Card>
           <CardContent className="p-4">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Ay</TableHead>
-                  <TableHead className="text-right">Gelir</TableHead>
-                  <TableHead className="text-right">Gider</TableHead>
-                  <TableHead className="text-right">Net</TableHead>
-                  <TableHead className="text-right">Kar Marjı</TableHead>
+                  <TableHead>{t.month}</TableHead>
+                  <TableHead className="text-right">{t.revenue}</TableHead>
+                  <TableHead className="text-right">{t.expenses}</TableHead>
+                  <TableHead className="text-right">{t.net}</TableHead>
+                  <TableHead className="text-right">{t.profitMargin}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -374,21 +450,21 @@ export function ReportPreview({ data }: ReportPreviewProps) {
       <section>
         <h2 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
           <Target className="h-5 w-5 text-orange-500" />
-          Kampanya Performansları
+          {t.campaignPerformance}
         </h2>
         <Card>
           <CardContent className="p-4">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Kampanya</TableHead>
-                  <TableHead>Durum</TableHead>
-                  <TableHead>Tür</TableHead>
-                  <TableHead className="text-right">Bütçe</TableHead>
+                  <TableHead>{t.campaign}</TableHead>
+                  <TableHead>{t.status}</TableHead>
+                  <TableHead>{t.type}</TableHead>
+                  <TableHead className="text-right">{t.budget}</TableHead>
                   <TableHead className="text-right">ROI</TableHead>
-                  <TableHead className="text-right">Gösterim</TableHead>
-                  <TableHead className="text-right">Tıklama</TableHead>
-                  <TableHead className="text-right">Dönüşüm</TableHead>
+                  <TableHead className="text-right">{t.impressions}</TableHead>
+                  <TableHead className="text-right">{t.clicks}</TableHead>
+                  <TableHead className="text-right">{t.conversion}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -435,7 +511,7 @@ export function ReportPreview({ data }: ReportPreviewProps) {
         <section className="page-break-before">
           <h2 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-purple-500" />
-            Niteliksel Kazanımlar (ROO Analizi)
+            {t.qualitativeGains}
           </h2>
           
           {/* ROO Özet Kartları */}
@@ -445,7 +521,7 @@ export function ReportPreview({ data }: ReportPreviewProps) {
                 <p className="text-2xl font-bold text-indigo-900">
                   {data.rooSummary.avgRooScore.toFixed(1)}
                 </p>
-                <p className="text-xs text-indigo-700">Ort. ROO Skoru</p>
+                <p className="text-xs text-indigo-700">{t.avgRooScore}</p>
               </CardContent>
             </Card>
             <Card className="bg-gradient-to-br from-slate-50 to-slate-100 border-slate-200">
@@ -453,7 +529,7 @@ export function ReportPreview({ data }: ReportPreviewProps) {
                 <p className="text-2xl font-bold text-slate-900">
                   {data.rooSummary.totalObjectives}
                 </p>
-                <p className="text-xs text-slate-700">Toplam Hedef</p>
+                <p className="text-xs text-slate-700">{t.totalObjectives}</p>
               </CardContent>
             </Card>
             <Card className="bg-gradient-to-br from-emerald-50 to-emerald-100 border-emerald-200">
@@ -461,7 +537,7 @@ export function ReportPreview({ data }: ReportPreviewProps) {
                 <p className="text-2xl font-bold text-emerald-900">
                   {data.rooSummary.completedObjectives}
                 </p>
-                <p className="text-xs text-emerald-700">Tamamlanan</p>
+                <p className="text-xs text-emerald-700">{t.completed}</p>
               </CardContent>
             </Card>
             <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
@@ -469,7 +545,7 @@ export function ReportPreview({ data }: ReportPreviewProps) {
                 <p className="text-2xl font-bold text-purple-900">
                   {data.rooSummary.exceededObjectives}
                 </p>
-                <p className="text-xs text-purple-700">Hedef Aşan</p>
+                <p className="text-xs text-purple-700">{t.exceeded}</p>
               </CardContent>
             </Card>
             <Card className="bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200">
@@ -477,7 +553,7 @@ export function ReportPreview({ data }: ReportPreviewProps) {
                 <p className="text-2xl font-bold text-orange-900">
                   {data.rooSummary.atRiskObjectives}
                 </p>
-                <p className="text-xs text-orange-700">Risk Altında</p>
+                <p className="text-xs text-orange-700">{t.atRisk}</p>
               </CardContent>
             </Card>
           </div>
@@ -490,16 +566,16 @@ export function ReportPreview({ data }: ReportPreviewProps) {
                   <div>
                     <CardTitle className="text-lg">{rooReport.campaignName}</CardTitle>
                     <p className="text-sm text-muted-foreground mt-1">
-                      Stratejik Hedef Performansı
+                      {t.strategicGoalPerformance}
                     </p>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="text-right">
                       <p className="text-2xl font-bold text-indigo-600">{rooReport.rooScore.toFixed(1)}</p>
-                      <p className="text-xs text-muted-foreground">ROO Skoru</p>
+                      <p className="text-xs text-muted-foreground">{t.rooScore}</p>
                     </div>
                     <Badge className={`${PERFORMANCE_COLORS[rooReport.performanceCategory]} border`}>
-                      {rooReport.performanceLabel}
+                      {getPerformanceLabel(rooReport.rooScore, locale)}
                     </Badge>
                   </div>
                 </div>
@@ -509,7 +585,7 @@ export function ReportPreview({ data }: ReportPreviewProps) {
                 <div className="mb-4">
                   <h4 className="text-sm font-semibold text-slate-700 mb-3 flex items-center gap-2">
                     <Trophy className="h-4 w-4 text-amber-500" />
-                    Öne Çıkan Kazanımlar
+                    {t.keyAchievements}
                   </h4>
                   <div className="grid grid-cols-2 gap-3">
                     {rooReport.qualitativeGains.slice(0, 4).map((gain, index) => {
@@ -543,17 +619,17 @@ export function ReportPreview({ data }: ReportPreviewProps) {
                 <div>
                   <h4 className="text-sm font-semibold text-slate-700 mb-3 flex items-center gap-2">
                     <Target className="h-4 w-4 text-blue-500" />
-                    Hedef Detayları
+                    {t.objectiveDetails}
                   </h4>
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Hedef</TableHead>
-                        <TableHead>Tür</TableHead>
-                        <TableHead className="text-right">Hedef</TableHead>
-                        <TableHead className="text-right">Gerçekleşen</TableHead>
-                        <TableHead className="text-right">Başarı</TableHead>
-                        <TableHead>Durum</TableHead>
+                        <TableHead>{t.objective}</TableHead>
+                        <TableHead>{t.type}</TableHead>
+                        <TableHead className="text-right">{t.target}</TableHead>
+                        <TableHead className="text-right">{t.actual}</TableHead>
+                        <TableHead className="text-right">{t.achievement}</TableHead>
+                        <TableHead>{t.status}</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -561,7 +637,7 @@ export function ReportPreview({ data }: ReportPreviewProps) {
                         <TableRow key={obj.id}>
                           <TableCell className="font-medium">{obj.name}</TableCell>
                           <TableCell className="text-sm text-muted-foreground">
-                            {obj.typeLabel}
+                            {getObjectiveTypeLabel(obj.type, locale)}
                           </TableCell>
                           <TableCell className="text-right">
                             {formatNumber(obj.targetValue)} {obj.unit}
@@ -598,7 +674,7 @@ export function ReportPreview({ data }: ReportPreviewProps) {
                               obj.status === 'BEHIND' ? "bg-orange-50 text-orange-700 border-orange-200" :
                               "bg-slate-50 text-slate-700 border-slate-200"
                             }>
-                              {obj.statusLabel}
+                              {getObjectiveStatusLabel(obj.status, locale)}
                             </Badge>
                           </TableCell>
                         </TableRow>
@@ -611,7 +687,7 @@ export function ReportPreview({ data }: ReportPreviewProps) {
                 <div className="mt-4 p-4 bg-slate-50 rounded-lg border border-slate-200">
                   <h4 className="text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
                     <FileText className="h-4 w-4 text-slate-500" />
-                    Yönetici Özeti
+                    {t.executiveSummary}
                   </h4>
                   <div className="text-sm text-slate-600 whitespace-pre-line leading-relaxed">
                     {rooReport.executiveSummary.split('\n\n').slice(0, 2).join('\n\n')}
@@ -627,7 +703,7 @@ export function ReportPreview({ data }: ReportPreviewProps) {
       <section>
         <h2 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
           <PieChart className="h-5 w-5 text-purple-500" />
-          RFM Segmentasyonu
+          {t.rfmSegmentation}
         </h2>
         <Card>
           <CardContent className="p-4">
@@ -662,19 +738,19 @@ export function ReportPreview({ data }: ReportPreviewProps) {
       <section>
         <h2 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
           <Users className="h-5 w-5 text-cyan-500" />
-          Sponsor Analizi ve LTV Tahminleri
+          {t.sponsorAnalysis}
         </h2>
         <Card>
           <CardContent className="p-4">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Sponsor</TableHead>
-                  <TableHead>Tier</TableHead>
-                  <TableHead>RFM Segment</TableHead>
-                  <TableHead className="text-right">Toplam Değer</TableHead>
-                  <TableHead className="text-right">Tahmini LTV</TableHead>
-                  <TableHead className="text-right">Churn Riski</TableHead>
+                  <TableHead>{t.sponsor}</TableHead>
+                  <TableHead>{t.tier}</TableHead>
+                  <TableHead>{t.rfmSegment}</TableHead>
+                  <TableHead className="text-right">{t.totalValue}</TableHead>
+                  <TableHead className="text-right">{t.estimatedLTV}</TableHead>
+                  <TableHead className="text-right">{t.churnRisk}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -737,12 +813,12 @@ export function ReportPreview({ data }: ReportPreviewProps) {
       <footer className="border-t pt-6 mt-8">
         <div className="flex items-center justify-between text-sm text-slate-500">
           <div>
-            <p>Bu rapor DevRetain CRM tarafından otomatik olarak oluşturulmuştur.</p>
-            <p>Oluşturulma: {formatDate(data.generatedAt)}</p>
+            <p>{t.footerGenerated}</p>
+            <p>{t.footerCreated}: {formatDate(data.generatedAt)}</p>
           </div>
           <div className="text-right">
             <p className="font-medium text-slate-700">DevRetain CRM</p>
-            <p>Sponsorluk Yönetim Sistemi</p>
+            <p>{t.managementSystem}</p>
           </div>
         </div>
       </footer>

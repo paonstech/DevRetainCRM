@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
+import { useTranslations } from "next-intl"
 import {
   ArrowLeft,
   Zap,
@@ -18,16 +19,23 @@ import { Toaster } from "@/components/ui/toaster"
 import { useToast } from "@/hooks/use-toast"
 import {
   generateReport,
-  exportToPDF,
-  formatShortDate,
   type ReportData,
 } from "@/lib/report-generator"
+import { 
+  exportLocalizedPDF, 
+  formatLocalizedDate 
+} from "@/lib/localized-report-generator"
 import { useSubscription } from "@/contexts/subscription-context"
 import { UpgradeModal } from "@/components/subscription/upgrade-modal"
-import { Lock, Unlock, Crown } from "lucide-react"
+import { useLocale } from "@/hooks/use-locale"
+import { Lock } from "lucide-react"
 
 export default function ReportsPage() {
+  const t = useTranslations("reports")
+  const tCommon = useTranslations("common")
+  const tToast = useTranslations("toast")
   const { toast } = useToast()
+  const { locale, format } = useLocale()
   const [isLoading, setIsLoading] = useState(false)
   const [isExporting, setIsExporting] = useState(false)
   const [reportData, setReportData] = useState<ReportData | null>(null)
@@ -37,12 +45,12 @@ export default function ReportsPage() {
   const { isProOrHigher, plan } = useSubscription()
   const hasPDFExport = isProOrHigher()
   
-  // Varsayılan tarih aralığı: Son 6 ay
+  // Default date range: Last 6 months
   const [startDate, setStartDate] = useState<Date | undefined>(undefined)
   const [endDate, setEndDate] = useState<Date | undefined>(undefined)
   const [isInitialized, setIsInitialized] = useState(false)
 
-  // Client-side'da tarihleri ayarla (hydration hatası önlenir)
+  // Set dates on client-side (prevents hydration error)
   useEffect(() => {
     const end = new Date()
     const start = new Date()
@@ -52,7 +60,7 @@ export default function ReportsPage() {
     setIsInitialized(true)
   }, [])
 
-  // Tarihler ayarlandığında rapor oluştur
+  // Generate report when dates are set
   useEffect(() => {
     if (isInitialized && startDate && endDate) {
       handleGenerateReport()
@@ -62,8 +70,8 @@ export default function ReportsPage() {
   const handleGenerateReport = () => {
     if (!startDate || !endDate) {
       toast({
-        title: "Hata",
-        description: "Lütfen tarih aralığı seçin.",
+        title: tCommon("error"),
+        description: locale === 'tr' ? "Lütfen tarih aralığı seçin." : "Please select a date range.",
         variant: "destructive",
       })
       return
@@ -71,7 +79,7 @@ export default function ReportsPage() {
 
     setIsLoading(true)
 
-    // Simüle edilmiş yükleme
+    // Simulated loading
     setTimeout(() => {
       const data = generateReport("org-1", {
         startDate,
@@ -81,8 +89,10 @@ export default function ReportsPage() {
       setIsLoading(false)
 
       toast({
-        title: "Rapor Oluşturuldu",
-        description: `${formatShortDate(startDate)} - ${formatShortDate(endDate)} dönemi için rapor hazır.`,
+        title: locale === 'tr' ? "Rapor Oluşturuldu" : "Report Generated",
+        description: locale === 'tr' 
+          ? `${format.date(startDate)} - ${format.date(endDate)} dönemi için rapor hazır.`
+          : `Report ready for ${format.date(startDate)} - ${format.date(endDate)}.`,
         variant: "success",
       })
     }, 500)
@@ -100,21 +110,33 @@ export default function ReportsPage() {
     setIsExporting(true)
 
     try {
-      const filename = `DevRetain_Rapor_${formatShortDate(reportData.dateRange.startDate)}_${formatShortDate(reportData.dateRange.endDate)}`
-        .replace(/\./g, "-")
+      const dateStr = format.date(reportData.dateRange.startDate).replace(/\./g, "-").replace(/\//g, "-")
+      const dateEndStr = format.date(reportData.dateRange.endDate).replace(/\./g, "-").replace(/\//g, "-")
+      const filename = `DevRetain_${locale === 'tr' ? 'Rapor' : 'Report'}_${dateStr}_${dateEndStr}`
         .replace(/\s/g, "_")
 
-      await exportToPDF("report-content", filename)
+      await exportLocalizedPDF({
+        locale,
+        elementId: "report-content",
+        filename,
+        title: t("pdf.title"),
+        subtitle: t("pdf.subtitle"),
+        showConfidential: true,
+      })
 
       toast({
-        title: "PDF İndirildi! 📄",
-        description: `${filename}.pdf başarıyla oluşturuldu.`,
+        title: locale === 'tr' ? "PDF İndirildi! 📄" : "PDF Downloaded! 📄",
+        description: locale === 'tr' 
+          ? `${filename}.pdf başarıyla oluşturuldu.`
+          : `${filename}.pdf successfully created.`,
         variant: "success",
       })
     } catch (error) {
       toast({
-        title: "Hata",
-        description: "PDF oluşturulurken bir hata oluştu.",
+        title: tCommon("error"),
+        description: locale === 'tr' 
+          ? "PDF oluşturulurken bir hata oluştu."
+          : "An error occurred while creating the PDF.",
         variant: "destructive",
       })
     } finally {
@@ -137,13 +159,17 @@ export default function ReportsPage() {
               <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                 DevRetain CRM
               </h1>
-              <p className="text-xs text-muted-foreground">Sponsorluk Yönetim Sistemi</p>
+              <p className="text-xs text-muted-foreground">
+                {locale === 'tr' ? 'Sponsorluk Yönetim Sistemi' : 'Sponsorship Management System'}
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-4">
             <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
               <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-sm font-medium text-emerald-600">Demo Modu</span>
+              <span className="text-sm font-medium text-emerald-600">
+                {locale === 'tr' ? 'Demo Modu' : 'Demo Mode'}
+              </span>
             </div>
           </div>
         </div>
@@ -156,7 +182,7 @@ export default function ReportsPage() {
           <Link href="/">
             <Button variant="ghost" className="gap-2">
               <ArrowLeft className="h-4 w-4" />
-              Dashboard'a Dön
+              {locale === 'tr' ? "Dashboard'a Dön" : 'Back to Dashboard'}
             </Button>
           </Link>
         </div>
@@ -169,10 +195,12 @@ export default function ReportsPage() {
             </div>
             <div>
               <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
-                Rapor Oluştur
+                {t("generate")}
               </h2>
               <p className="text-muted-foreground mt-1">
-                Kampanya performansları, RFM analizi ve LTV tahminleri
+                {locale === 'tr' 
+                  ? 'Kampanya performansları, RFM analizi ve LTV tahminleri'
+                  : 'Campaign performance, RFM analysis and LTV predictions'}
               </p>
             </div>
           </div>
@@ -181,9 +209,13 @@ export default function ReportsPage() {
         {/* Controls */}
         <Card className="mb-8">
           <CardHeader>
-            <CardTitle className="text-lg">Rapor Ayarları</CardTitle>
+            <CardTitle className="text-lg">
+              {locale === 'tr' ? 'Rapor Ayarları' : 'Report Settings'}
+            </CardTitle>
             <CardDescription>
-              Rapor dönemini seçin ve raporu oluşturun
+              {locale === 'tr' 
+                ? 'Rapor dönemini seçin ve raporu oluşturun'
+                : 'Select the report period and generate the report'}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -203,12 +235,12 @@ export default function ReportsPage() {
                   {isLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Oluşturuluyor...
+                      {locale === 'tr' ? 'Oluşturuluyor...' : 'Generating...'}
                     </>
                   ) : (
                     <>
                       <RefreshCw className="mr-2 h-4 w-4" />
-                      Raporu Yenile
+                      {locale === 'tr' ? 'Raporu Yenile' : 'Refresh Report'}
                     </>
                   )}
                 </Button>
@@ -223,17 +255,17 @@ export default function ReportsPage() {
                   {isExporting ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      İndiriliyor...
+                      {locale === 'tr' ? 'İndiriliyor...' : 'Downloading...'}
                     </>
                   ) : hasPDFExport ? (
                     <>
                       <Download className="mr-2 h-4 w-4" />
-                      PDF İndir
+                      {t("export")}
                     </>
                   ) : (
                     <>
                       <Lock className="mr-2 h-4 w-4" />
-                      Pro ile İndir
+                      {locale === 'tr' ? 'Pro ile İndir' : 'Download with Pro'}
                     </>
                   )}
                 </Button>
@@ -248,14 +280,16 @@ export default function ReportsPage() {
             <CardContent className="flex items-center justify-center py-20">
               <div className="flex flex-col items-center gap-4">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                <p className="text-muted-foreground">Rapor oluşturuluyor...</p>
+                <p className="text-muted-foreground">
+                  {locale === 'tr' ? 'Rapor oluşturuluyor...' : 'Generating report...'}
+                </p>
               </div>
             </CardContent>
           </Card>
         ) : reportData ? (
           <Card className="overflow-hidden">
             <CardContent className="p-0 overflow-x-auto">
-              <ReportPreview data={reportData} />
+              <ReportPreview data={reportData} locale={locale} />
             </CardContent>
           </Card>
         ) : (
@@ -264,7 +298,9 @@ export default function ReportsPage() {
               <div className="text-center">
                 <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                 <p className="text-muted-foreground">
-                  Rapor oluşturmak için tarih aralığı seçin ve "Raporu Yenile" butonuna tıklayın.
+                  {locale === 'tr' 
+                    ? 'Rapor oluşturmak için tarih aralığı seçin ve "Raporu Yenile" butonuna tıklayın.'
+                    : 'Select a date range and click "Refresh Report" to generate a report.'}
                 </p>
               </div>
             </CardContent>
