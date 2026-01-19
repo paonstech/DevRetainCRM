@@ -616,131 +616,213 @@ export function runMatchingEngine(
 // Mock Data for Testing
 // ============================================================================
 
+/**
+ * Mock Creator Profiles - Kategori bazlı mantıklı korelasyonlarla
+ * 
+ * TEKNOLOJİ: Yüksek ROI (28-35%), Düşük-Orta ROO (68-78%), Düşük Engagement (5-8%)
+ * OYUN/ESPOR: Orta-Yüksek ROI (22-32%), Çok Yüksek ROO (85-95%), Çok Yüksek Engagement (12-18%)
+ * SAĞLIK: Orta ROI (16-24%), Çok Yüksek ROO (88-95%), Yüksek Engagement (9-14%)
+ * GIDA: Orta ROI (15-24%), Yüksek ROO (82-90%), Çok Yüksek Engagement (11-16%)
+ * EĞİTİM: Orta ROI (18-26%), Çok Yüksek ROO (88-96%), Düşük Engagement (5-9%)
+ * FİNANS: Yüksek ROI (26-35%), Düşük ROO (60-72%), Düşük Engagement (4-7%)
+ */
 export const mockCreators: CreatorProfile[] = [
+  // TEKNOLOJİ - Yüksek ROI, Düşük-Orta ROO, Düşük Engagement
   {
     id: 'creator-1',
     name: 'TechVision TR',
     type: 'YOUTUBER',
     category: 'Teknoloji',
     followers: 2450000,
-    avgViews: 450000,
-    engagementRate: 8.5,
-    avgROI: 28.5,
-    avgROO: 91,
-    completedCampaigns: 45,
-    trustScore: 94,
+    avgViews: 485000,
+    engagementRate: 6.2,  // Düşük - pasif izleyici
+    avgROI: 31.5,  // Yüksek - doğrudan satış dönüşümü
+    avgROO: 72,  // Düşük-orta - niş kitle
+    completedCampaigns: 67,
+    trustScore: 96,
     verified: true,
     audience: {
       ageGroups: [
-        { range: '18-24', percentage: 35 },
-        { range: '25-34', percentage: 42 },
-        { range: '35-44', percentage: 18 },
-        { range: '45+', percentage: 5 },
+        { range: '18-24', percentage: 22 },
+        { range: '25-34', percentage: 45 },
+        { range: '35-44', percentage: 25 },
+        { range: '45+', percentage: 8 },
       ],
-      gender: { male: 72, female: 28 },
+      gender: { male: 78, female: 22 },
       topLocations: ['İstanbul', 'Ankara', 'İzmir', 'Bursa', 'Antalya'],
     },
-    pricing: { min: 50000, max: 150000 },
+    pricing: { min: 65000, max: 180000 },
     tags: ['teknoloji', 'yazılım', 'gadget', 'review', 'eğitim'],
     pastCampaignCategories: ['Teknoloji', 'Yazılım', 'Finans', 'E-ticaret'],
     rooHistory: [
-      { category: 'Teknoloji', avgScore: 93, campaignCount: 28 },
-      { category: 'Yazılım', avgScore: 89, campaignCount: 12 },
-      { category: 'Finans', avgScore: 85, campaignCount: 5 },
+      { category: 'Teknoloji', avgScore: 74, campaignCount: 42 },
+      { category: 'Yazılım', avgScore: 71, campaignCount: 18 },
+      { category: 'Finans', avgScore: 68, campaignCount: 7 },
     ],
   },
+  // OYUN - Orta-Yüksek ROI, Çok Yüksek ROO, Çok Yüksek Engagement
   {
     id: 'creator-2',
     name: 'Gaming Universe',
     type: 'YOUTUBER',
     category: 'Oyun',
     followers: 1850000,
-    avgViews: 320000,
-    engagementRate: 12.3,
-    avgROI: 32.1,
-    avgROO: 88,
-    completedCampaigns: 38,
+    avgViews: 425000,
+    engagementRate: 14.8,  // Çok yüksek - aktif topluluk
+    avgROI: 26.4,  // Orta-yüksek - impulsif alım
+    avgROO: 89,  // Çok yüksek - marka sadakati
+    completedCampaigns: 48,
     trustScore: 91,
     verified: true,
     audience: {
       ageGroups: [
-        { range: '18-24', percentage: 52 },
-        { range: '25-34', percentage: 35 },
-        { range: '35-44', percentage: 10 },
-        { range: '45+', percentage: 3 },
+        { range: '18-24', percentage: 58 },
+        { range: '25-34', percentage: 32 },
+        { range: '35-44', percentage: 8 },
+        { range: '45+', percentage: 2 },
       ],
-      gender: { male: 78, female: 22 },
+      gender: { male: 82, female: 18 },
       topLocations: ['İstanbul', 'Ankara', 'İzmir', 'Antalya', 'Bursa'],
     },
-    pricing: { min: 40000, max: 120000 },
+    pricing: { min: 40000, max: 110000 },
     tags: ['oyun', 'espor', 'canlı yayın', 'gaming', 'review'],
     pastCampaignCategories: ['Oyun', 'Teknoloji', 'Gıda'],
     rooHistory: [
-      { category: 'Oyun', avgScore: 91, campaignCount: 25 },
-      { category: 'Teknoloji', avgScore: 84, campaignCount: 8 },
+      { category: 'Oyun', avgScore: 92, campaignCount: 32 },
+      { category: 'Teknoloji', avgScore: 86, campaignCount: 12 },
+      { category: 'Gıda', avgScore: 88, campaignCount: 4 },
     ],
   },
+  // ESPOR KULÜBÜ - Orta ROI, Çok Yüksek ROO, En Yüksek Engagement
   {
     id: 'creator-3',
     name: 'Beşiktaş Espor',
     type: 'CLUB',
     category: 'Espor',
     followers: 3200000,
-    avgViews: 580000,
-    engagementRate: 15.2,
-    avgROI: 24.8,
-    avgROO: 92,
-    completedCampaigns: 62,
+    avgViews: 768000,
+    engagementRate: 16.5,  // En yüksek - taraftar bağı
+    avgROI: 22.8,  // Orta - marka bilinirliği odaklı
+    avgROO: 94,  // Çok yüksek - duygusal bağ
+    completedCampaigns: 78,
     trustScore: 98,
     verified: true,
     audience: {
       ageGroups: [
-        { range: '18-24', percentage: 45 },
+        { range: '18-24', percentage: 42 },
         { range: '25-34', percentage: 38 },
-        { range: '35-44', percentage: 12 },
+        { range: '35-44', percentage: 15 },
         { range: '45+', percentage: 5 },
       ],
-      gender: { male: 68, female: 32 },
+      gender: { male: 76, female: 24 },
       topLocations: ['İstanbul', 'Ankara', 'İzmir', 'Bursa', 'Konya'],
     },
     pricing: { min: 200000, max: 500000 },
-    tags: ['espor', 'lol', 'valorant', 'cs2', 'futbol'],
+    tags: ['espor', 'lol', 'valorant', 'cs2', 'beşiktaş'],
     pastCampaignCategories: ['Espor', 'Oyun', 'Teknoloji', 'Gıda', 'Otomotiv'],
     rooHistory: [
-      { category: 'Espor', avgScore: 94, campaignCount: 35 },
-      { category: 'Oyun', avgScore: 90, campaignCount: 15 },
-      { category: 'Teknoloji', avgScore: 88, campaignCount: 8 },
+      { category: 'Espor', avgScore: 96, campaignCount: 45 },
+      { category: 'Oyun', avgScore: 93, campaignCount: 22 },
+      { category: 'Teknoloji', avgScore: 88, campaignCount: 11 },
     ],
   },
+  // SAĞLIK - Orta ROI, Çok Yüksek ROO, Yüksek Engagement
   {
     id: 'creator-4',
     name: 'Fit & Healthy',
     type: 'YOUTUBER',
     category: 'Sağlık',
     followers: 890000,
-    avgViews: 180000,
-    engagementRate: 9.8,
-    avgROI: 22.3,
-    avgROO: 76,
-    completedCampaigns: 24,
-    trustScore: 87,
+    avgViews: 196000,
+    engagementRate: 11.4,  // Yüksek - motivasyon arayan kitle
+    avgROI: 19.8,  // Orta - uzun dönem müşteri
+    avgROO: 91,  // Çok yüksek - yaşam değişimi
+    completedCampaigns: 34,
+    trustScore: 86,
     verified: true,
     audience: {
       ageGroups: [
-        { range: '18-24', percentage: 28 },
-        { range: '25-34', percentage: 45 },
-        { range: '35-44', percentage: 20 },
-        { range: '45+', percentage: 7 },
+        { range: '18-24', percentage: 25 },
+        { range: '25-34', percentage: 42 },
+        { range: '35-44', percentage: 25 },
+        { range: '45+', percentage: 8 },
       ],
       gender: { male: 45, female: 55 },
       topLocations: ['İstanbul', 'Ankara', 'İzmir', 'Antalya', 'Muğla'],
     },
-    pricing: { min: 25000, max: 75000 },
+    pricing: { min: 22000, max: 65000 },
     tags: ['fitness', 'sağlık', 'beslenme', 'spor', 'yaşam'],
     pastCampaignCategories: ['Sağlık', 'Gıda', 'Spor'],
     rooHistory: [
-      { category: 'Sağlık', avgScore: 82, campaignCount: 15 },
-      { category: 'Gıda', avgScore: 78, campaignCount: 6 },
+      { category: 'Sağlık', avgScore: 93, campaignCount: 22 },
+      { category: 'Gıda', avgScore: 88, campaignCount: 8 },
+      { category: 'Spor', avgScore: 90, campaignCount: 4 },
+    ],
+  },
+  // EĞİTİM - Orta ROI, Çok Yüksek ROO, Düşük Engagement
+  {
+    id: 'creator-5',
+    name: 'Code Academy TR',
+    type: 'YOUTUBER',
+    category: 'Eğitim',
+    followers: 650000,
+    avgViews: 117000,
+    engagementRate: 5.4,  // Düşük - öğrenme odaklı
+    avgROI: 22.6,  // Orta-yüksek - yüksek değerli kurslar
+    avgROO: 93,  // Çok yüksek - kariyer etkisi
+    completedCampaigns: 31,
+    trustScore: 95,
+    verified: true,
+    audience: {
+      ageGroups: [
+        { range: '18-24', percentage: 38 },
+        { range: '25-34', percentage: 48 },
+        { range: '35-44', percentage: 12 },
+        { range: '45+', percentage: 2 },
+      ],
+      gender: { male: 68, female: 32 },
+      topLocations: ['İstanbul', 'Ankara', 'İzmir', 'Bursa', 'Kocaeli'],
+    },
+    pricing: { min: 20000, max: 55000 },
+    tags: ['yazılım', 'eğitim', 'programlama', 'kariyer'],
+    pastCampaignCategories: ['Eğitim', 'Teknoloji', 'Kariyer'],
+    rooHistory: [
+      { category: 'Eğitim', avgScore: 95, campaignCount: 20 },
+      { category: 'Teknoloji', avgScore: 88, campaignCount: 8 },
+      { category: 'Kariyer', avgScore: 92, campaignCount: 3 },
+    ],
+  },
+  // FİNANS - Yüksek ROI, Düşük ROO, Düşük Engagement
+  {
+    id: 'creator-6',
+    name: 'Finans Okulu',
+    type: 'YOUTUBER',
+    category: 'Finans',
+    followers: 720000,
+    avgViews: 122000,
+    engagementRate: 4.8,  // En düşük - hassas konu
+    avgROI: 28.5,  // Yüksek - yüksek değerli müşteri
+    avgROO: 68,  // Düşük - karmaşık ürünler
+    completedCampaigns: 26,
+    trustScore: 94,
+    verified: true,
+    audience: {
+      ageGroups: [
+        { range: '18-24', percentage: 15 },
+        { range: '25-34', percentage: 38 },
+        { range: '35-44', percentage: 32 },
+        { range: '45+', percentage: 15 },
+      ],
+      gender: { male: 76, female: 24 },
+      topLocations: ['İstanbul', 'Ankara', 'İzmir', 'Bursa', 'Kocaeli'],
+    },
+    pricing: { min: 35000, max: 100000 },
+    tags: ['finans', 'yatırım', 'borsa', 'kripto'],
+    pastCampaignCategories: ['Finans', 'Teknoloji', 'Eğitim'],
+    rooHistory: [
+      { category: 'Finans', avgScore: 70, campaignCount: 18 },
+      { category: 'Teknoloji', avgScore: 65, campaignCount: 5 },
+      { category: 'Eğitim', avgScore: 72, campaignCount: 3 },
     ],
   },
 ]

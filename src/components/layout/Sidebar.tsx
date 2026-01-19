@@ -112,13 +112,13 @@ const navItems: NavItem[] = [
     icon: Heart,
     roles: ["SPONSOR"],
   },
+  // Common items - Discovery for both roles
   {
     href: "/sponsor/discover",
     label: "Keşfet",
     icon: Search,
-    roles: ["SPONSOR"],
+    roles: ["CREATOR", "SPONSOR"], // Both can discover partners
   },
-  // Common items
   {
     href: "/matches",
     label: "Eşleşmeler",
