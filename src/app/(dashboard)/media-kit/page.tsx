@@ -60,6 +60,8 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
+import { useToast } from "@/hooks/use-toast"
+import { Toaster } from "@/components/ui/toaster"
 import { cn } from "@/lib/utils"
 
 // Mock data for the creator's profile
@@ -157,12 +159,15 @@ const fileTypeConfig = {
 }
 
 export default function MediaKitPage() {
+  const { toast } = useToast()
   const [activeTab, setActiveTab] = useState("profile")
   const [files, setFiles] = useState(initialFiles)
   const [isEditing, setIsEditing] = useState(false)
   const [profile, setProfile] = useState(creatorProfile)
   const [isDragging, setIsDragging] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const formatFileSize = (bytes: number) => {
@@ -190,9 +195,14 @@ export default function MediaKitPage() {
     }).format(value)
   }
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const uploadedFiles = e.target.files
     if (!uploadedFiles) return
+
+    setIsUploading(true)
+
+    // Simulate upload delay
+    await new Promise(resolve => setTimeout(resolve, 1500))
 
     Array.from(uploadedFiles).forEach((file) => {
       const extension = file.name.split('.').pop()?.toLowerCase() || ''
@@ -208,10 +218,65 @@ export default function MediaKitPage() {
       setFiles(prev => [newFile, ...prev])
     })
 
+    setIsUploading(false)
+    
+    toast({
+      title: "Dosya Yüklendi! 📁",
+      description: `${uploadedFiles.length} dosya başarıyla yüklendi.`,
+      variant: "success",
+    })
+
     // Reset input
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
     }
+  }
+
+  const handleSaveProfile = async () => {
+    setIsSaving(true)
+    
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1500))
+    
+    setIsSaving(false)
+    setIsEditing(false)
+    
+    toast({
+      title: "Profil Güncellendi! ✨",
+      description: "Değişiklikleriniz başarıyla kaydedildi.",
+      variant: "success",
+    })
+  }
+
+  const handleDeleteFile = (fileId: string) => {
+    setFiles(prev => prev.filter(f => f.id !== fileId))
+    toast({
+      title: "Dosya Silindi",
+      description: "Dosya başarıyla kaldırıldı.",
+    })
+  }
+
+  const handleToggleFileVisibility = (fileId: string) => {
+    setFiles(prev => prev.map(f => 
+      f.id === fileId ? { ...f, isPublic: !f.isPublic } : f
+    ))
+    const file = files.find(f => f.id === fileId)
+    toast({
+      title: file?.isPublic ? "Dosya Gizlendi" : "Dosya Yayınlandı",
+      description: file?.isPublic 
+        ? "Dosya artık sponsorlar tarafından görülemez."
+        : "Dosya artık sponsorlar tarafından görülebilir.",
+    })
+  }
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(`https://devretain.com/creator/${profile.id}`)
+    setCopied(true)
+    toast({
+      title: "Link Kopyalandı! 🔗",
+      description: "Profil linkiniz panoya kopyalandı.",
+    })
+    setTimeout(() => setCopied(false), 2000)
   }
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -248,21 +313,7 @@ export default function MediaKitPage() {
     })
   }
 
-  const deleteFile = (fileId: string) => {
-    setFiles(prev => prev.filter(f => f.id !== fileId))
-  }
-
-  const toggleFileVisibility = (fileId: string) => {
-    setFiles(prev => prev.map(f => 
-      f.id === fileId ? { ...f, isPublic: !f.isPublic } : f
-    ))
-  }
-
-  const copyProfileLink = () => {
-    navigator.clipboard.writeText(`https://devretain.com/creator/${profile.id}`)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
+  // Legacy functions - now using toast-enabled versions above
 
   const publicFiles = files.filter(f => f.isPublic)
 
@@ -283,7 +334,7 @@ export default function MediaKitPage() {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <Button variant="outline" size="sm" onClick={copyProfileLink}>
+            <Button variant="outline" size="sm" onClick={handleCopyLink}>
               {copied ? (
                 <>
                   <Check className="h-4 w-4 mr-2 text-emerald-500" />
@@ -343,9 +394,18 @@ export default function MediaKitPage() {
                       <Button
                         variant={isEditing ? "default" : "outline"}
                         size="sm"
-                        onClick={() => setIsEditing(!isEditing)}
+                        onClick={() => isEditing ? handleSaveProfile() : setIsEditing(true)}
+                        disabled={isSaving}
                       >
-                        {isEditing ? (
+                        {isSaving ? (
+                          <>
+                            <svg className="animate-spin h-4 w-4 mr-2" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                            </svg>
+                            Kaydediliyor...
+                          </>
+                        ) : isEditing ? (
                           <>
                             <Save className="h-4 w-4 mr-2" />
                             Kaydet
@@ -726,7 +786,7 @@ export default function MediaKitPage() {
                             <Label className="text-xs text-slate-500">Herkese Açık</Label>
                             <Switch
                               checked={file.isPublic}
-                              onCheckedChange={() => toggleFileVisibility(file.id)}
+                              onCheckedChange={() => handleToggleFileVisibility(file.id)}
                             />
                           </div>
                           <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -739,7 +799,7 @@ export default function MediaKitPage() {
                             variant="ghost" 
                             size="icon" 
                             className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
-                            onClick={() => deleteFile(file.id)}
+                            onClick={() => handleDeleteFile(file.id)}
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -1059,6 +1119,9 @@ export default function MediaKitPage() {
           </TabsContent>
         </Tabs>
       </main>
+
+      {/* Toast Provider */}
+      <Toaster />
     </div>
   )
 }

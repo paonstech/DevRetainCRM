@@ -49,6 +49,18 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
+import { useToast } from "@/hooks/use-toast"
+import { Toaster } from "@/components/ui/toaster"
 import { cn } from "@/lib/utils"
 import {
   findMatchesForSponsor,
@@ -78,18 +90,102 @@ function generateMatches() {
 }
 
 export default function MatchesPage() {
+  const { toast } = useToast()
   const [activeTab, setActiveTab] = useState("recommendations")
   const [userType, setUserType] = useState<"sponsor" | "creator">("sponsor")
   const [matches, setMatches] = useState<MatchResult[]>([])
   const [notifications, setNotifications] = useState<MatchNotification[]>([])
   const [sortBy, setSortBy] = useState("matchScore")
   const [filterConfidence, setFilterConfidence] = useState("all")
+  
+  // Modal states
+  const [contactModalOpen, setContactModalOpen] = useState(false)
+  const [selectedMatch, setSelectedMatch] = useState<MatchResult | null>(null)
+  const [contactMessage, setContactMessage] = useState("")
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [favorites, setFavorites] = useState<string[]>([])
+  const [dismissedMatches, setDismissedMatches] = useState<string[]>([])
 
   useEffect(() => {
     const { matches: generatedMatches, notifications: generatedNotifications } = generateMatches()
     setMatches(generatedMatches)
     setNotifications(generatedNotifications)
   }, [])
+
+  // Handle contact action
+  const handleContact = async () => {
+    if (!selectedMatch || !contactMessage) {
+      toast({
+        title: "Mesaj Gerekli",
+        description: "Lütfen bir mesaj yazın.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    setIsSubmitting(true)
+    await new Promise(resolve => setTimeout(resolve, 1500))
+    
+    toast({
+      title: "Mesaj Gönderildi! 🎉",
+      description: `${selectedMatch.creatorName} ile iletişime geçildi.`,
+      variant: "success",
+    })
+    
+    setIsSubmitting(false)
+    setContactModalOpen(false)
+    setContactMessage("")
+    setSelectedMatch(null)
+  }
+
+  // Open contact modal
+  const openContactModal = (match: MatchResult) => {
+    setSelectedMatch(match)
+    setContactModalOpen(true)
+  }
+
+  // Handle favorite
+  const toggleFavorite = (matchId: string) => {
+    setFavorites(prev => {
+      const newFavorites = prev.includes(matchId) 
+        ? prev.filter(id => id !== matchId)
+        : [...prev, matchId]
+      
+      toast({
+        title: prev.includes(matchId) ? "Favorilerden Çıkarıldı" : "Favorilere Eklendi ⭐",
+        description: prev.includes(matchId) 
+          ? "Eşleşme favorilerinizden kaldırıldı."
+          : "Eşleşme favorilerinize eklendi.",
+      })
+      
+      return newFavorites
+    })
+  }
+
+  // Handle dismiss match
+  const dismissMatch = (matchId: string) => {
+    setDismissedMatches(prev => [...prev, matchId])
+    toast({
+      title: "Eşleşme Gizlendi",
+      description: "Bu eşleşme artık listede gösterilmeyecek.",
+    })
+  }
+
+  // Mark notification as read
+  const markNotificationRead = (notificationId: string) => {
+    setNotifications(prev => prev.map(n => 
+      n.id === notificationId ? { ...n, read: true } : n
+    ))
+  }
+
+  // Mark all notifications as read
+  const markAllNotificationsRead = () => {
+    setNotifications(prev => prev.map(n => ({ ...n, read: true })))
+    toast({
+      title: "Tümü Okundu",
+      description: "Tüm bildirimler okundu olarak işaretlendi.",
+    })
+  }
 
   const formatNumber = (value: number) => {
     if (value >= 1000000) {
@@ -111,6 +207,7 @@ export default function MatchesPage() {
 
   // Filter matches based on user type (for demo, show all)
   const filteredMatches = matches
+    .filter(m => !dismissedMatches.includes(`${m.sponsorId}-${m.creatorId}`))
     .filter(m => filterConfidence === "all" || m.confidence === filterConfidence)
     .sort((a, b) => {
       switch (sortBy) {
@@ -421,19 +518,47 @@ export default function MatchesPage() {
 
                         {/* Actions */}
                         <div className="flex items-center gap-2 lg:flex-col">
-                          <Button size="sm" className="bg-violet-600 hover:bg-violet-700 flex-1 lg:flex-none lg:w-full">
+                          <Button 
+                            size="sm" 
+                            className="bg-violet-600 hover:bg-violet-700 flex-1 lg:flex-none lg:w-full"
+                            onClick={() => openContactModal(match)}
+                          >
                             <MessageSquare className="h-4 w-4 mr-1" />
                             İletişime Geç
                           </Button>
-                          <Button variant="outline" size="sm" className="flex-1 lg:flex-none lg:w-full">
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="flex-1 lg:flex-none lg:w-full"
+                            onClick={() => window.open(`/creator/${match.creatorId}`, '_blank')}
+                          >
                             <Eye className="h-4 w-4 mr-1" />
                             Profil
                           </Button>
                           <div className="flex items-center gap-1">
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50">
-                              <ThumbsUp className="h-4 w-4" />
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className={cn(
+                                "h-8 w-8",
+                                favorites.includes(`${match.sponsorId}-${match.creatorId}`)
+                                  ? "text-amber-500 bg-amber-50"
+                                  : "text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
+                              )}
+                              onClick={() => toggleFavorite(`${match.sponsorId}-${match.creatorId}`)}
+                            >
+                              {favorites.includes(`${match.sponsorId}-${match.creatorId}`) ? (
+                                <Star className="h-4 w-4 fill-current" />
+                              ) : (
+                                <ThumbsUp className="h-4 w-4" />
+                              )}
                             </Button>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50">
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50"
+                              onClick={() => dismissMatch(`${match.sponsorId}-${match.creatorId}`)}
+                            >
                               <ThumbsDown className="h-4 w-4" />
                             </Button>
                           </div>
@@ -547,7 +672,18 @@ export default function MatchesPage() {
                         )}
 
                         <div className="flex items-center gap-4 mt-3">
-                          <Button size="sm" className="bg-violet-600 hover:bg-violet-700">
+                          <Button 
+                            size="sm" 
+                            className="bg-violet-600 hover:bg-violet-700"
+                            onClick={() => {
+                              markNotificationRead(notification.id)
+                              // Find the match and open contact modal
+                              const match = matches.find(m => 
+                                m.sponsorId === notification.sponsorId && m.creatorId === notification.creatorId
+                              )
+                              if (match) openContactModal(match)
+                            }}
+                          >
                             Detayları Gör
                             <ArrowRight className="h-4 w-4 ml-1" />
                           </Button>
@@ -556,7 +692,12 @@ export default function MatchesPage() {
                           </span>
                         </div>
                       </div>
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8"
+                        onClick={() => markNotificationRead(notification.id)}
+                      >
                         <X className="h-4 w-4" />
                       </Button>
                     </div>
@@ -633,6 +774,97 @@ export default function MatchesPage() {
           </Card>
         </main>
       </div>
+
+      {/* Contact Modal */}
+      <Dialog open={contactModalOpen} onOpenChange={setContactModalOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-3">
+              {selectedMatch && (
+                <>
+                  <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-bold">
+                    {selectedMatch.creatorName.split(" ").map(n => n[0]).join("").slice(0, 2)}
+                  </div>
+                  <div>
+                    <span>{selectedMatch.creatorName}</span>
+                    <p className="text-sm font-normal text-slate-500">Eşleşme Skoru: {selectedMatch.matchScore}%</p>
+                  </div>
+                </>
+              )}
+            </DialogTitle>
+            <DialogDescription>
+              Bu içerik üreticisi ile iletişime geçin ve sponsorluk fırsatını değerlendirin.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4">
+            {/* Match Stats */}
+            {selectedMatch && (
+              <div className="grid grid-cols-3 gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-900">
+                <div className="text-center">
+                  <p className="text-xs text-slate-500">Tahmini ROI</p>
+                  <p className="font-semibold text-emerald-600">%{selectedMatch.potentialROI}</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-xs text-slate-500">Tahmini ROO</p>
+                  <p className="font-semibold text-violet-600">{selectedMatch.potentialROO}</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-xs text-slate-500">Güven</p>
+                  <Badge className={cn("text-xs", getConfidenceColor(selectedMatch.confidence))}>
+                    {selectedMatch.confidence === "HIGH" ? "Yüksek" : selectedMatch.confidence === "MEDIUM" ? "Orta" : "Düşük"}
+                  </Badge>
+                </div>
+              </div>
+            )}
+
+            {/* Message */}
+            <div className="space-y-2">
+              <Label htmlFor="contact-message">Mesajınız</Label>
+              <Textarea
+                id="contact-message"
+                placeholder="Sponsorluk teklifinizi veya sorularınızı yazın..."
+                rows={4}
+                value={contactMessage}
+                onChange={(e) => setContactMessage(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              onClick={() => setContactModalOpen(false)}
+              disabled={isSubmitting}
+            >
+              İptal
+            </Button>
+            <Button 
+              onClick={handleContact}
+              disabled={isSubmitting || !contactMessage}
+              className="bg-violet-600 hover:bg-violet-700"
+            >
+              {isSubmitting ? (
+                <>
+                  <svg className="animate-spin h-4 w-4 mr-2" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                  </svg>
+                  Gönderiliyor...
+                </>
+              ) : (
+                <>
+                  <MessageSquare className="h-4 w-4 mr-2" />
+                  Mesaj Gönder
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Toast Provider */}
+      <Toaster />
     </TooltipProvider>
   )
 }

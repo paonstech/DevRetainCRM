@@ -41,6 +41,17 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Textarea } from "@/components/ui/textarea"
+import { useToast } from "@/hooks/use-toast"
+import { Toaster } from "@/components/ui/toaster"
 import { cn } from "@/lib/utils"
 
 // Mock data for discoverable creators/clubs
@@ -221,6 +232,7 @@ const platformIcons = {
 }
 
 export default function DiscoverPage() {
+  const { toast } = useToast()
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("Tümü")
   const [sortBy, setSortBy] = useState("trustScore")
@@ -233,6 +245,68 @@ export default function DiscoverPage() {
   const [minTrustScore, setMinTrustScore] = useState("")
   const [partnerType, setPartnerType] = useState("all")
   const [verifiedOnly, setVerifiedOnly] = useState(false)
+  
+  // Modal states
+  const [offerModalOpen, setOfferModalOpen] = useState(false)
+  const [selectedPartner, setSelectedPartner] = useState<typeof discoverablePartners[0] | null>(null)
+  const [offerMessage, setOfferMessage] = useState("")
+  const [offerBudget, setOfferBudget] = useState("")
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [favorites, setFavorites] = useState<string[]>([])
+
+  // Handle sending offer
+  const handleSendOffer = async () => {
+    if (!selectedPartner || !offerMessage || !offerBudget) {
+      toast({
+        title: "Eksik Bilgi",
+        description: "Lütfen tüm alanları doldurun.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    setIsSubmitting(true)
+    
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1500))
+    
+    toast({
+      title: "Teklif Gönderildi! 🎉",
+      description: `${selectedPartner.name} için teklifiniz başarıyla iletildi.`,
+      variant: "success",
+    })
+    
+    setIsSubmitting(false)
+    setOfferModalOpen(false)
+    setOfferMessage("")
+    setOfferBudget("")
+    setSelectedPartner(null)
+  }
+
+  // Handle opening offer modal
+  const openOfferModal = (partner: typeof discoverablePartners[0]) => {
+    setSelectedPartner(partner)
+    setOfferBudget(partner.pricing.min.toString())
+    setOfferModalOpen(true)
+  }
+
+  // Handle favorite toggle
+  const toggleFavorite = (partnerId: string) => {
+    setFavorites(prev => {
+      const newFavorites = prev.includes(partnerId) 
+        ? prev.filter(id => id !== partnerId)
+        : [...prev, partnerId]
+      
+      toast({
+        title: prev.includes(partnerId) ? "Favorilerden Çıkarıldı" : "Favorilere Eklendi",
+        description: prev.includes(partnerId) 
+          ? "Partner favorilerinizden kaldırıldı."
+          : "Partner favorilerinize eklendi.",
+      })
+      
+      return newFavorites
+    })
+  }
 
   // Filter and sort partners
   const filteredPartners = discoverablePartners
@@ -545,7 +619,12 @@ export default function DiscoverPage() {
                             %{partner.avgROI} ROI
                           </span>
                         </div>
-                        <Button size="sm" variant="ghost" className="text-emerald-600 hover:text-emerald-700">
+                        <Button 
+                          size="sm" 
+                          variant="ghost" 
+                          className="text-emerald-600 hover:text-emerald-700"
+                          onClick={() => openOfferModal(partner)}
+                        >
                           <Eye className="h-4 w-4 mr-1" />
                           İncele
                         </Button>
@@ -643,10 +722,24 @@ export default function DiscoverPage() {
                         {formatCurrency(partner.pricing.min)} - {formatCurrency(partner.pricing.max)}
                       </p>
                       <div className="flex items-center gap-2">
-                        <Button variant="outline" size="sm">
-                          <Heart className="h-4 w-4" />
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => toggleFavorite(partner.id)}
+                          className={cn(
+                            favorites.includes(partner.id) && "bg-red-50 border-red-200 text-red-600"
+                          )}
+                        >
+                          <Heart className={cn(
+                            "h-4 w-4",
+                            favorites.includes(partner.id) && "fill-current"
+                          )} />
                         </Button>
-                        <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700">
+                        <Button 
+                          size="sm" 
+                          className="bg-emerald-600 hover:bg-emerald-700"
+                          onClick={() => openOfferModal(partner)}
+                        >
                           <MessageSquare className="h-4 w-4 mr-1" />
                           Teklif Gönder
                         </Button>
@@ -679,6 +772,112 @@ export default function DiscoverPage() {
           )}
         </div>
       </main>
+
+      {/* Offer Modal */}
+      <Dialog open={offerModalOpen} onOpenChange={setOfferModalOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-3">
+              {selectedPartner && (
+                <>
+                  <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white font-bold">
+                    {selectedPartner.name.split(" ").map(n => n[0]).join("").slice(0, 2)}
+                  </div>
+                  <div>
+                    <span>{selectedPartner.name}</span>
+                    <p className="text-sm font-normal text-slate-500">{selectedPartner.category}</p>
+                  </div>
+                </>
+              )}
+            </DialogTitle>
+            <DialogDescription>
+              Sponsorluk teklifinizi gönderin. Partner en kısa sürede size dönüş yapacaktır.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4">
+            {/* Partner Stats */}
+            {selectedPartner && (
+              <div className="grid grid-cols-3 gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-900">
+                <div className="text-center">
+                  <p className="text-xs text-slate-500">Takipçi</p>
+                  <p className="font-semibold">{formatNumber(selectedPartner.followers)}</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-xs text-slate-500">Ort. ROI</p>
+                  <p className="font-semibold text-emerald-600">%{selectedPartner.avgROI}</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-xs text-slate-500">Güven Skoru</p>
+                  <p className="font-semibold">{selectedPartner.trustScore}</p>
+                </div>
+              </div>
+            )}
+
+            {/* Budget Input */}
+            <div className="space-y-2">
+              <Label htmlFor="budget">Teklif Bütçesi (₺)</Label>
+              <Input
+                id="budget"
+                type="number"
+                placeholder="Bütçenizi girin"
+                value={offerBudget}
+                onChange={(e) => setOfferBudget(e.target.value)}
+              />
+              {selectedPartner && (
+                <p className="text-xs text-slate-500">
+                  Önerilen aralık: {formatCurrency(selectedPartner.pricing.min)} - {formatCurrency(selectedPartner.pricing.max)}
+                </p>
+              )}
+            </div>
+
+            {/* Message */}
+            <div className="space-y-2">
+              <Label htmlFor="message">Mesajınız</Label>
+              <Textarea
+                id="message"
+                placeholder="Sponsorluk teklifinizi detaylandırın..."
+                rows={4}
+                value={offerMessage}
+                onChange={(e) => setOfferMessage(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              onClick={() => setOfferModalOpen(false)}
+              disabled={isSubmitting}
+            >
+              İptal
+            </Button>
+            <Button 
+              onClick={handleSendOffer}
+              disabled={isSubmitting || !offerMessage || !offerBudget}
+              className="bg-emerald-600 hover:bg-emerald-700"
+            >
+              {isSubmitting ? (
+                <>
+                  <svg className="animate-spin h-4 w-4 mr-2" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                  </svg>
+                  Gönderiliyor...
+                </>
+              ) : (
+                <>
+                  <MessageSquare className="h-4 w-4 mr-2" />
+                  Teklif Gönder
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Toast Provider */}
+      <Toaster />
     </div>
   )
 }

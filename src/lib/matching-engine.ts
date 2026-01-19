@@ -527,6 +527,8 @@ export interface MatchNotification {
   recipientId: string
   recipientType: 'SPONSOR' | 'CREATOR'
   matchId: string
+  sponsorId: string
+  creatorId: string
   title: string
   message: string
   matchScore: number
@@ -554,6 +556,8 @@ export function createMatchNotification(
       recipientId: match.sponsorId,
       recipientType: 'SPONSOR',
       matchId: match.id,
+      sponsorId: match.sponsorId,
+      creatorId: match.creatorId,
       title: '🎯 Yeni Bir Fırsat Var!',
       message: `${match.creatorName} sizin hedeflerinizle %${match.matchScore} uyumlu! ${
         match.confidence === 'HIGH' ? 'Yüksek güvenilirlikli eşleşme.' : ''
@@ -571,6 +575,8 @@ export function createMatchNotification(
     recipientId: match.creatorId,
     recipientType: 'CREATOR',
     matchId: match.id,
+    sponsorId: match.sponsorId,
+    creatorId: match.creatorId,
     title: '🎯 Yeni Bir Fırsat Var!',
     message: `${match.sponsorName} sizinle çalışmak istiyor! Eşleşme skoru: %${match.matchScore}`,
     matchScore: match.matchScore,
