@@ -101,7 +101,7 @@ export function UpgradeModal({
   const { plan: currentPlan, setPlan } = useSubscription()
   const [isLoading, setIsLoading] = useState(false)
 
-  const planDetails = PLAN_DETAILS[requiredPlan]
+  const planDetails = PLAN_DETAILS[requiredPlan as keyof typeof PLAN_DETAILS]
   const PlanIcon = planDetails.icon
   const FeatureIcon = feature ? FEATURE_ICONS[feature] || Zap : Zap
   const featureName = feature ? FEATURE_NAMES[feature] || feature : "Bu özellik"

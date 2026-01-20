@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import {
   ChevronLeft,
@@ -120,9 +120,18 @@ const fileTypeConfig = {
   pptx: { icon: Presentation, color: "text-orange-500", bg: "bg-orange-100 dark:bg-orange-900/30" },
 }
 
-export default function CreatorProfilePage({ params }: { params: { id: string } }) {
+export default function CreatorProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const [activeTab, setActiveTab] = useState("overview")
-  const creator = creatorData // In real app, fetch based on params.id
+  const [creatorId, setCreatorId] = useState<string | null>(null)
+  
+  // Resolve params promise
+  useEffect(() => {
+    params.then((resolved) => {
+      setCreatorId(resolved.id)
+    })
+  }, [params])
+  
+  const creator = creatorData // In real app, fetch based on creatorId
 
   const formatNumber = (value: number) => {
     if (value >= 1000000) {

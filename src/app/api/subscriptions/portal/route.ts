@@ -1,9 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { prisma, isDatabaseAvailable } from '@/lib/prisma'
 import { createPortalSession } from '@/lib/stripe'
 
 export async function POST(request: NextRequest) {
   try {
+    // Check if database is available
+    if (!isDatabaseAvailable()) {
+      return NextResponse.json(
+        { error: 'Database not available' },
+        { status: 503 }
+      )
+    }
+
     const body = await request.json()
     const { organizationId, returnUrl } = body as {
       organizationId: string

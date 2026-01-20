@@ -196,8 +196,8 @@ export function scopedQuery(organizationId: string) {
       findUnique: (args: Parameters<typeof prisma.campaign.findUnique>[0]) =>
         prisma.campaign.findFirst({
           where: { ...args.where, organizationId },
-          include: args.include,
-          select: args.select,
+          ...(args.include ? { include: args.include } : {}),
+          ...(args.select ? { select: args.select } : {}),
         }),
       count: (args?: Parameters<typeof prisma.campaign.count>[0]) =>
         prisma.campaign.count({
@@ -219,8 +219,8 @@ export function scopedQuery(organizationId: string) {
       findUnique: (args: Parameters<typeof prisma.sponsor.findUnique>[0]) =>
         prisma.sponsor.findFirst({
           where: { ...args.where, organizationId },
-          include: args.include,
-          select: args.select,
+          ...(args.include ? { include: args.include } : {}),
+          ...(args.select ? { select: args.select } : {}),
         }),
       count: (args?: Parameters<typeof prisma.sponsor.count>[0]) =>
         prisma.sponsor.count({
@@ -270,7 +270,7 @@ export function scopedQuery(organizationId: string) {
         }),
       create: (data: Omit<Parameters<typeof prisma.activityLog.create>[0]["data"], "organizationId">) =>
         prisma.activityLog.create({
-          data: { ...data, organizationId },
+          data: { ...data, organizationId } as any,
         }),
     },
   }
@@ -369,7 +369,7 @@ export async function logActivity(
       action,
       entityType,
       entityId,
-      changes: changes ? JSON.stringify(changes) : null,
+      changes: changes ? JSON.stringify(changes) : undefined,
       description,
     },
   })

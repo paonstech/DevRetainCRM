@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { prisma, isDatabaseAvailable } from '@/lib/prisma'
 import {
   cancelSubscription,
   resumeSubscription,
@@ -32,6 +32,25 @@ export async function GET(request: NextRequest) {
         { error: 'organizationId is required' },
         { status: 400 }
       )
+    }
+
+    // Check if database is available, if not return default FREE plan
+    if (!isDatabaseAvailable()) {
+      return NextResponse.json({
+        subscription: {
+          plan: 'FREE',
+          status: 'ACTIVE',
+          features: PLANS.FREE.features,
+          limits: {
+            campaigns: { used: 0, limit: PLANS.FREE.features.campaignsLimit },
+            sponsors: { used: 0, limit: PLANS.FREE.features.sponsorsLimit },
+            members: { used: 0, limit: PLANS.FREE.features.membersLimit },
+            storage: { used: 0, limit: PLANS.FREE.features.storageLimit },
+          },
+        },
+        invoices: [],
+        upcomingInvoice: null,
+      })
     }
 
     const subscription = await prisma.subscription.findUnique({
@@ -141,6 +160,14 @@ export async function GET(request: NextRequest) {
 // PATCH - Update subscription (cancel, resume, change plan)
 export async function PATCH(request: NextRequest) {
   try {
+    // Check if database is available
+    if (!isDatabaseAvailable()) {
+      return NextResponse.json(
+        { error: 'Database not available' },
+        { status: 503 }
+      )
+    }
+
     const body = await request.json()
     const { organizationId, action, newPlan } = body as {
       organizationId: string

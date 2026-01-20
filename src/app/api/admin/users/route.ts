@@ -1,10 +1,23 @@
 import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
-import { prisma } from "@/lib/prisma"
+import { prisma, isDatabaseAvailable } from "@/lib/prisma"
 
 // GET /api/admin/users - List all users (admin only)
 export async function GET(request: NextRequest) {
   try {
+    // Check if database is available, if not return mock data
+    if (!isDatabaseAvailable()) {
+      return NextResponse.json({
+        users: [],
+        pagination: {
+          page: 1,
+          limit: 20,
+          total: 0,
+          totalPages: 0,
+        },
+      })
+    }
+
     const session = await auth()
 
     // Check authentication
@@ -125,6 +138,11 @@ export async function GET(request: NextRequest) {
 // PATCH /api/admin/users - Update user (suspend, change role, etc.)
 export async function PATCH(request: NextRequest) {
   try {
+    // Check if database is available
+    if (!isDatabaseAvailable()) {
+      return NextResponse.json({ error: "Database not available" }, { status: 503 })
+    }
+
     const session = await auth()
 
     // Check authentication

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { headers } from 'next/headers'
 import Stripe from 'stripe'
-import { prisma } from '@/lib/prisma'
+import { prisma, isDatabaseAvailable } from '@/lib/prisma'
 import {
   stripe,
   constructWebhookEvent,
@@ -28,6 +28,15 @@ export const runtime = 'nodejs'
 
 // Handle Stripe webhooks
 export async function POST(request: NextRequest) {
+  // Check if database is available
+  if (!isDatabaseAvailable()) {
+    console.warn('Database not available, webhook cannot be processed')
+    return NextResponse.json(
+      { error: 'Database not available' },
+      { status: 503 }
+    )
+  }
+
   const body = await request.text()
   const headersList = await headers()
   const signature = headersList.get('stripe-signature')

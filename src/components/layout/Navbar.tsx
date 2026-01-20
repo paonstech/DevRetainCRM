@@ -131,7 +131,7 @@ export function Navbar({ user, notifications = 0 }: NavbarProps) {
             landingLinks.map((link) => (
               <Link
                 key={link.href}
-                href={link.href}
+                href={link.href as any}
                 className={cn(
                   "px-4 py-2 text-sm font-medium rounded-lg transition-colors",
                   pathname === link.href
@@ -151,7 +151,7 @@ export function Navbar({ user, notifications = 0 }: NavbarProps) {
               return (
                 <Link
                   key={link.href}
-                  href={link.href}
+                  href={link.href as any}
                   className={cn(
                     "flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg transition-colors",
                     isActive
@@ -287,7 +287,7 @@ export function Navbar({ user, notifications = 0 }: NavbarProps) {
                 {landingLinks.map((link) => (
                   <Link
                     key={link.href}
-                    href={link.href}
+                    href={link.href as any}
                     onClick={() => setMobileMenuOpen(false)}
                     className={cn(
                       "block px-4 py-3 text-sm font-medium rounded-lg transition-colors",
@@ -322,7 +322,7 @@ export function Navbar({ user, notifications = 0 }: NavbarProps) {
                   return (
                     <Link
                       key={link.href}
-                      href={link.href}
+                      href={link.href as any}
                       onClick={() => setMobileMenuOpen(false)}
                       className={cn(
                         "flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-colors",

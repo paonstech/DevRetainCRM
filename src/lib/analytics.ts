@@ -444,7 +444,7 @@ export async function calculateRFM(
 
   // Quintile (beşlik dilim) hesaplaması için tüm değerleri topla
   type SponsorAggregation = {
-    sponsorId: string
+    sponsorId: string | null
     _count: { id: number }
     _sum: { amount: number | { toNumber(): number } | null }
     _max: { transactionDate: Date | null }
